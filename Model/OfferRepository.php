@@ -1,11 +1,25 @@
 <?php
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\Offer
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @copyright 2016 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
 
 namespace Smile\Offer\Model;
 
+use Magento\Framework\Api\SearchCriteriaInterface;
 use Smile\Offer\Api\Data\OfferInterface;
 use Smile\Offer\Api\OfferRepositoryInterface;
 use Smile\Offer\Model\ResourceModel\Offer as OfferResource;
 use Smile\Offer\Api\Data\OfferInterfaceFactory as OfferFactory;
+use Smile\Offer\Model\ResourceModel\Offer\Collection;
 use Smile\Offer\Model\ResourceModel\Offer\CollectionFactory as OfferCollectionFactory;
 use Smile\Offer\Api\Data\OfferSearchResultsInterfaceFactory;
 use Magento\Framework\Exception\CouldNotSaveException;
@@ -13,9 +27,15 @@ use Magento\Framework\Exception\CouldNotDeleteException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Api\SortOrder;
 
+/**
+ * Offer Repository
+ *
+ * @category Smile
+ * @package  Smile\Offer
+ * @author   Aurelien Foucret <aurelien.foucret@smile.fr>
+ */
 class OfferRepository implements OfferRepositoryInterface
 {
-
     /**
      * @var \Smile\Offer\Model\ResourceModel\Offer
      */
@@ -37,6 +57,14 @@ class OfferRepository implements OfferRepositoryInterface
     private $searchResultsFactory;
 
 
+    /**
+     * OfferRepository constructor.
+     *
+     * @param \Smile\Offer\Model\ResourceModel\Offer                   $resource               Offer Resource Model
+     * @param \Smile\Offer\Api\Data\OfferInterfaceFactory              $offerFactory           Offer Factory
+     * @param \Smile\Offer\Model\ResourceModel\Offer\CollectionFactory $offerCollectionFactory Offer Collection Factory
+     * @param \Smile\Offer\Api\Data\OfferSearchResultsInterfaceFactory $searchResultsFactory   Search Results Factory
+     */
     public function __construct(
         OfferResource $resource,
         OfferFactory $offerFactory,
@@ -50,6 +78,9 @@ class OfferRepository implements OfferRepositoryInterface
         $this->searchResultsFactory   = $searchResultsFactory;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function save(OfferInterface $offer)
     {
         try {
@@ -61,6 +92,9 @@ class OfferRepository implements OfferRepositoryInterface
         return $offer;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getById($offerId)
     {
         $offer = $this->offerFactory->create();
@@ -73,6 +107,9 @@ class OfferRepository implements OfferRepositoryInterface
         return $offer;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function delete(OfferInterface $offer)
     {
         try {
@@ -82,12 +119,18 @@ class OfferRepository implements OfferRepositoryInterface
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function deleteById($offerId)
     {
         $this->delete($this->getById($offerId));
     }
 
-    public function getList(\Magento\Framework\Api\SearchCriteriaInterface $criteria)
+    /**
+     * {@inheritdoc}
+     */
+    public function getList(SearchCriteriaInterface $criteria)
     {
         $searchResults = $this->searchResultsFactory->create();
         $searchResults->setSearchCriteria($criteria);
@@ -100,7 +143,14 @@ class OfferRepository implements OfferRepositoryInterface
         return $searchResults;
     }
 
-    private function getOfferCollection(\Magento\Framework\Api\SearchCriteriaInterface $criteria)
+    /**
+     * Retrieve Offer Collection
+     *
+     * @param SearchCriteriaInterface $criteria The search criteria
+     *
+     * @return Collection
+     */
+    private function getOfferCollection(SearchCriteriaInterface $criteria)
     {
         $collection = $this->offerCollectionFactory->create();
 
@@ -113,9 +163,17 @@ class OfferRepository implements OfferRepositoryInterface
         return $collection;
     }
 
+    /**
+     * Apply filters to offer collection.
+     *
+     * @param Collection              $collection The collection
+     * @param SearchCriteriaInterface $criteria   Search criteria to apply
+     *
+     * @return $this
+     */
     private function addFiltersToCollection(
-        \Smile\Offer\Model\ResourceModel\Offer\Collection $collection,
-        \Magento\Framework\Api\SearchCriteriaInterface $criteria
+        Collection $collection,
+        SearchCriteriaInterface $criteria
     ) {
         foreach ($criteria->getFilterGroups() as $filterGroup) {
             foreach ($filterGroup->getFilters() as $filter) {
@@ -127,9 +185,17 @@ class OfferRepository implements OfferRepositoryInterface
         return $this;
     }
 
+    /**
+     * Apply sort order to offer collection.
+     *
+     * @param Collection              $collection The collection
+     * @param SearchCriteriaInterface $criteria   Search criteria to apply
+     *
+     * @return $this
+     */
     private function addSortOrdersToCollection(
-        \Smile\Offer\Model\ResourceModel\Offer\Collection $collection,
-        \Magento\Framework\Api\SearchCriteriaInterface $criteria
+        Collection $collection,
+        SearchCriteriaInterface $criteria
     ) {
         $sortOrders = $criteria->getSortOrders();
 

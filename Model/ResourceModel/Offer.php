@@ -23,9 +23,11 @@ use Magento\Framework\Model\ResourceModel\Db\Context;
 use Smile\Offer\Api\Data\OfferInterface;
 
 /**
+ * Offer Resource Model
  *
- * @todo : Store id ????
- *
+ * @category Smile
+ * @package  Smile\Offer
+ * @author   Aurelien Foucret <aurelien.foucret@smile.fr>
  */
 class Offer extends AbstractDb
 {
@@ -39,6 +41,14 @@ class Offer extends AbstractDb
      */
     protected $metadataPool;
 
+    /**
+     * Offer constructor.
+     *
+     * @param \Magento\Framework\Model\ResourceModel\Db\Context $context        Application Context
+     * @param \Magento\Framework\EntityManager\EntityManager    $entityManager  Entity Manager
+     * @param \Magento\Framework\EntityManager\MetadataPool     $metadataPool   Metadata Pool
+     * @param null                                              $connectionName Connection name
+     */
     public function __construct(
         Context $context,
         EntityManager $entityManager,
@@ -50,6 +60,76 @@ class Offer extends AbstractDb
         parent::__construct($context, $connectionName);
     }
 
+    /**
+     * Load an Offer by a given field's value.
+     *
+     * @param \Magento\Framework\Model\AbstractModel $object The offer
+     * @param mixed                                  $value  The value
+     * @param null                                   $field  The field, if any
+     *
+     * @return $this
+     */
+    public function load(AbstractModel $object, $value, $field = null)
+    {
+        $offerId = $this->getOfferId($object, $value, $field);
+        if ($offerId) {
+            $this->entityManager->load($object, $offerId);
+        }
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function save(AbstractModel $object)
+    {
+        $this->entityManager->save($object);
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function delete(AbstractModel $object)
+    {
+        $this->entityManager->delete($object);
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getConnection()
+    {
+        return $this->metadataPool->getMetadata(OfferInterface::class)->getEntityConnection();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName) Method is inherited.
+     */
+    protected function _construct()
+    {
+        $metadata = $this->metadataPool->getMetadata(OfferInterface::class);
+        $this->_init($metadata->getEntityTable(), $metadata->getIdentifierField());
+    }
+
+
+    /**
+     * Retrieve Offer Id by field value
+     *
+     * @param \Magento\Framework\Model\AbstractModel $object The Offer
+     * @param mixed                                  $value  The value
+     * @param null                                   $field  The field
+     *
+     * @return int|false
+     * @throws \Exception
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
     private function getOfferId(AbstractModel $object, $value, $field = null)
     {
         $entityMetadata = $this->metadataPool->getMetadata(OfferInterface::class);
@@ -71,51 +151,5 @@ class Offer extends AbstractDb
         }
 
         return $entityId;
-    }
-
-
-    public function load(AbstractModel $object, $value, $field = null)
-    {
-        $offerId = $this->getOfferId($object, $value, $field);
-        if ($offerId) {
-            $this->entityManager->load($object, $offerId);
-        }
-
-        return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function save(AbstractModel $object)
-    {
-        $this->entityManager->save($object);
-        return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function delete(AbstractModel $object)
-    {
-        $this->entityManager->delete($object);
-        return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getConnection()
-    {
-        return $this->metadataPool->getMetadata(OfferInterface::class)->getEntityConnection();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function _construct()
-    {
-        $metadata = $this->metadataPool->getMetadata(OfferInterface::class);
-        $this->_init($metadata->getEntityTable(), $metadata->getIdentifierField());
     }
 }

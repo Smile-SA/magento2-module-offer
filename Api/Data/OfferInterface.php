@@ -15,17 +15,50 @@
 namespace Smile\Offer\Api\Data;
 
 /**
+ * Data Api for Offers
+ *
  * @api
  */
 interface OfferInterface extends \Magento\Framework\Api\ExtensibleDataInterface
 {
+    /**
+     * The offer Id field
+     */
     const OFFER_ID                  = 'offer_id';
+
+    /**
+     * The Product Id field
+     */
     const PRODUCT_ID                = 'product_id';
+
+    /**
+     * The Seller Id field
+     */
     const SELLER_ID                 = 'seller_id';
+
+    /**
+     * The availability status field
+     */
     const IS_AVAILABLE              = 'is_available';
+
+    /**
+     * Price field
+     */
     const PRICE                     = 'price';
+
+    /**
+     * Special Price field
+     */
     const SPECIAL_PRICE             = 'special_price';
+
+    /**
+     * Start date field
+     */
     const START_DATE                = 'start_date';
+
+    /**
+     * End Date field
+     */
     const END_DATE                  = 'end_date';
 
     /**
@@ -112,13 +145,13 @@ interface OfferInterface extends \Magento\Framework\Api\ExtensibleDataInterface
     public function setSellerId($sellerId);
 
     /**
-     * Set offer availibility.
+     * Set offer availability.
      *
-     * @param bool $availibility Availibility.
+     * @param bool $availability Availability.
      *
      * @return \Smile\Offer\Api\Data\OfferInterface
      */
-    public function setIsAvailable($availibility);
+    public function setIsAvailable($availability);
 
     /**
      * Set offer price.

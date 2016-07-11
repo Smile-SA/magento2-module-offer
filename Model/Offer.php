@@ -19,9 +19,13 @@ use Magento\Framework\Model\AbstractModel;
 use Magento\Framework\DataObject\IdentityInterface;
 
 /**
+ * Offer Model
  *
- * @todo : Store id ????
+ * @SuppressWarnings(PHPMD.CamelCasePropertyName) properties are inherited.
  *
+ * @category Smile
+ * @package  Smile\Offer
+ * @author   Aurelien Foucret <aurelien.foucret@smile.fr>
  */
 class Offer extends AbstractModel implements OfferInterface, IdentityInterface
 {
@@ -62,7 +66,7 @@ class Offer extends AbstractModel implements OfferInterface, IdentityInterface
      */
     public function getSellerId()
     {
-      return $this->getData(self::SELLER_ID);
+        return $this->getData(self::SELLER_ID);
     }
 
     /**
@@ -84,9 +88,9 @@ class Offer extends AbstractModel implements OfferInterface, IdentityInterface
     /**
      * {@inheritDoc}
      */
-    public function getSpecialPrice() {
+    public function getSpecialPrice()
+    {
         return $this->getData(self::SPECIAL_PRICE);
-
     }
 
     /**
@@ -132,9 +136,9 @@ class Offer extends AbstractModel implements OfferInterface, IdentityInterface
     /**
      * {@inheritDoc}
      */
-    public function setIsAvailable($availibility)
+    public function setIsAvailable($availability)
     {
-        return $this->setData(self::IS_AVAILABLE, $availibility);
+        return $this->setData(self::IS_AVAILABLE, $availability);
 
     }
 
@@ -180,6 +184,8 @@ class Offer extends AbstractModel implements OfferInterface, IdentityInterface
 
     /**
      * {@inheritDoc}
+     *
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName) Method is inherited
      */
     protected function _construct()
     {

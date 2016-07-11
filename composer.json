@@ -1,0 +1,32 @@
+{
+    "name": "smile/module-offer",
+    "type": "magento2-module",
+    "description": "Smile Retailer Suite - Offer Module",
+    "keywords": ["magento2","retailer suite","retailer","offer"],
+    "require": {
+        "php": "~5.5.0|~5.6.0|~7.0.0",
+        "magento/framework": "*",
+        "magento/module-catalog": "*",
+        "magento/magento-composer-installer": "*",
+        "smile/module-seller" : "*"
+    },
+    "license": "OSL-3.0",
+    "authors": [
+        {
+            "name": "Aurélien Foucret",
+            "email": "aurelien.foucret@smile.fr"
+        },
+        {
+            "name": "Romain Ruaud",
+            "email": "romain.ruaud@smile.fr"
+        }
+    ],
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Smile\\Offer\\" : ""
+        }
+    }
+}

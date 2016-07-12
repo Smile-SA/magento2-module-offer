@@ -18,6 +18,7 @@ use Magento\Framework\Data\Collection\EntityFactoryInterface;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Framework\Event\ManagerInterface;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
 use Psr\Log\LoggerInterface;
 use Magento\Eav\Model\Config;
@@ -94,29 +95,32 @@ class Collection extends \Smile\Offer\Model\ResourceModel\Offer\Collection
     }
 
     /**
-     * Add Seller Attribute to current collection.
+     * Add Entity Attribute to current collection.
      *
+     * @TODO : Cannot work properly if adding several attributes for the same entity : should be reworked as an UNION assembled on beforeLoad
+     *
+     * @param string $entityType    The Entity Type
      * @param string $attributeCode The Attribute code
      * @param string $alias         The field alias, if any
      * @param int    $storeId       The current store scope for seller attributes retrieval
      *
      * @return $this
      */
-    public function addSellerAttributeToSelect($attributeCode, $alias = null, $storeId = null)
+    public function addEntityAttributeToSelect($entityType, $attributeCode, $alias = null, $storeId = null)
     {
         $columns = (null === $alias) ? [$attributeCode => 'value'] : [$alias => 'value'];
 
-        $attribute     = $this->eavConfig->getAttribute(\Smile\Seller\Api\Data\SellerInterface::ENTITY, $attributeCode);
-        $entity        = $this->eavEntityFactory->create()->setType(\Smile\Seller\Api\Data\SellerInterface::ENTITY);
+        $attribute     = $this->eavConfig->getAttribute($entityType, $attributeCode);
+        $entity        = $this->eavEntityFactory->create()->setType($entityType);
         $entityIdField = $entity->getEntityIdField();
-        $primaryKey    = \Smile\Offer\Api\Data\OfferInterface::SELLER_ID;
+        $foreignKey    = $this->getForeignKeyByEntityType($entityType);
 
         if ($attribute && !$attribute->isStatic()) {
             $backendTable = $attribute->getBackendTable();
 
             $this->getSelect()->joinLeft(
-                ["t_d" => $this->getTable($backendTable)],
-                new \Zend_Db_Expr("t_d.{$entityIdField} = main_table.{$primaryKey}"),
+                ["{$entityType}_d" => $this->getTable($backendTable)],
+                new \Zend_Db_Expr("{$entityType}_d.{$entityIdField} = main_table.{$foreignKey}"),
                 $columns
             );
 
@@ -124,16 +128,38 @@ class Collection extends \Smile\Offer\Model\ResourceModel\Offer\Collection
 
             if ($storeId) {
                 $joinCondition = [
-                    't_s.attribute_id = t_d.attribute_id',
-                    "t_s.{$entityIdField} = t_d.{$entityIdField}",
-                    $this->getConnection()->quoteInto('t_s.store_id = ?', $storeId),
+                    "{$entityType}_s.attribute_id = {$entityType}_d.attribute_id",
+                    "{$entityType}_s.{$entityIdField} = {$entityType}_d.{$entityIdField}",
+                    $this->getConnection()->quoteInto("{$entityType}_s.store_id = ?", $storeId),
                 ];
 
                 $this->getSelect()->joinLeft(['t_s' => $backendTable], implode(' AND ', $joinCondition), []);
-                $storeCondition = $this->getConnection()->getIfNullSql('t_s.store_id', \Magento\Store\Model\Store::DEFAULT_STORE_ID);
+                $storeCondition = $this->getConnection()->getIfNullSql("{$entityType}_s.store_id", \Magento\Store\Model\Store::DEFAULT_STORE_ID);
             }
 
-            $this->getSelect()->where('t_d.store_id = ?', $storeCondition);
+            $this->getSelect()->where("{$entityType}_d.store_id = ?", $storeCondition);
+            $this->getSelect()->group("main_table.offer_id");
         }
+    }
+
+    /**
+     * Retrieve proper field for binding on other entities.
+     *
+     * @param string $entityType The entity type
+     *
+     * @return string
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    private function getForeignKeyByEntityType($entityType)
+    {
+        if ($entityType == \Smile\Seller\Api\Data\SellerInterface::ENTITY) {
+            return \Smile\Offer\Api\Data\OfferInterface::SELLER_ID;
+        }
+
+        if ($entityType == \Magento\Catalog\Model\Product::ENTITY) {
+            return \Smile\Offer\Api\Data\OfferInterface::PRODUCT_ID;
+        }
+
+        throw new NoSuchEntityException("Unable to retrieve fetch strategy for {$entityType}");
     }
 }

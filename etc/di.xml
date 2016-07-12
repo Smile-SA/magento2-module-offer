@@ -23,6 +23,8 @@
 
     <preference for="Smile\Offer\Api\OfferRepositoryInterface" type="Smile\Offer\Model\OfferRepository" />
 
+    <preference for="Smile\Offer\Model\Locator\LocatorInterface" type="Smile\Offer\Model\Locator\RegistryLocator"/>
+
     <type name="Magento\Framework\EntityManager\MetadataPool">
         <arguments>
             <argument name="metadata" xsi:type="array">

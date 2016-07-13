@@ -23,6 +23,7 @@ use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
 use Psr\Log\LoggerInterface;
 use Magento\Eav\Model\Config;
 use Magento\Eav\Model\EntityFactory;
+use Smile\Offer\Api\Data\OfferInterface;
 
 /**
  * Offer Grid Collection
@@ -42,6 +43,11 @@ class Collection extends \Smile\Offer\Model\ResourceModel\Offer\Collection
      * @var EntityFactory
      */
     private $eavEntityFactory;
+
+    /**
+     * @var array an array of external entities attributes to add to the current collection.
+     */
+    private $selectEntityAttributes = [];
 
     /**
      * Collection constructor.
@@ -95,15 +101,14 @@ class Collection extends \Smile\Offer\Model\ResourceModel\Offer\Collection
     }
 
     /**
-     * Add Entity Attribute to current collection.
-     *
-     * @TODO : Cannot work properly if adding several attributes for the same entity : should be reworked as an UNION assembled on beforeLoad
+     * Add Attribute of an other entity to current collection (Seller, Product).
      *
      * @param string $entityType    The Entity Type
      * @param string $attributeCode The Attribute code
      * @param string $alias         The field alias, if any
      * @param int    $storeId       The current store scope for seller attributes retrieval
      *
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
      * @return $this
      */
     public function addEntityAttributeToSelect($entityType, $attributeCode, $alias = null, $storeId = null)
@@ -114,31 +119,35 @@ class Collection extends \Smile\Offer\Model\ResourceModel\Offer\Collection
         $entity        = $this->eavEntityFactory->create()->setType($entityType);
         $entityIdField = $entity->getEntityIdField();
         $foreignKey    = $this->getForeignKeyByEntityType($entityType);
+        $idField       = OfferInterface::OFFER_ID;
 
         if ($attribute && !$attribute->isStatic()) {
-            $backendTable = $attribute->getBackendTable();
+            $backendTable        = $attribute->getBackendTable();
+            $attributeTableAlias = $this->getEntityAttributeTableAlias($entityType, $attributeCode);
 
+            // Join entity attribute value table.
             $this->getSelect()->joinLeft(
-                ["{$entityType}_d" => $this->getTable($backendTable)],
-                new \Zend_Db_Expr("{$entityType}_d.{$entityIdField} = main_table.{$foreignKey}"),
+                ["{$attributeTableAlias}_d" => $this->getTable($backendTable)],
+                new \Zend_Db_Expr("{$attributeTableAlias}_d.{$entityIdField} = main_table.{$foreignKey}"),
                 $columns
             );
 
             $storeCondition = \Magento\Store\Model\Store::DEFAULT_STORE_ID;
 
+            // Apply correct store to attribute value table, if any.
             if ($storeId) {
                 $joinCondition = [
-                    "{$entityType}_s.attribute_id = {$entityType}_d.attribute_id",
-                    "{$entityType}_s.{$entityIdField} = {$entityType}_d.{$entityIdField}",
-                    $this->getConnection()->quoteInto("{$entityType}_s.store_id = ?", $storeId),
+                    "{$attributeTableAlias}_s.attribute_id = {$attributeTableAlias}_d.attribute_id",
+                    "{$attributeTableAlias}_s.{$entityIdField} = {$attributeTableAlias}_d.{$entityIdField}",
+                    $this->getConnection()->quoteInto("{$attributeTableAlias}_s.store_id = ?", $storeId),
                 ];
 
                 $this->getSelect()->joinLeft(['t_s' => $backendTable], implode(' AND ', $joinCondition), []);
-                $storeCondition = $this->getConnection()->getIfNullSql("{$entityType}_s.store_id", \Magento\Store\Model\Store::DEFAULT_STORE_ID);
+                $storeCondition = $this->getConnection()->getIfNullSql("{$attributeTableAlias}_s.store_id", \Magento\Store\Model\Store::DEFAULT_STORE_ID);
             }
 
-            $this->getSelect()->where("{$entityType}_d.store_id = ?", $storeCondition);
-            $this->getSelect()->group("main_table.offer_id");
+            $this->getSelect()->where("{$attributeTableAlias}_d.store_id = ?", $storeCondition);
+            $this->getSelect()->group("main_table.{$idField}");
         }
     }
 
@@ -161,5 +170,18 @@ class Collection extends \Smile\Offer\Model\ResourceModel\Offer\Collection
         }
 
         throw new NoSuchEntityException("Unable to retrieve fetch strategy for {$entityType}");
+    }
+
+    /**
+     * Get an alias for a given couple entity/attributeCode to ensure unicity on SQL query.
+     *
+     * @param string $entityType    The entity type
+     * @param string $attributeCode The attribute code
+     *
+     * @return string
+     */
+    private function getEntityAttributeTableAlias($entityType, $attributeCode)
+    {
+        return $entityType . "_" . $attributeCode;
     }
 }

@@ -221,6 +221,16 @@ class Offer extends AbstractModel implements OfferInterface, IdentityInterface
     }
 
     /**
+     * {@inheritDoc}
+     *
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName) Method is inherited
+     */
+    protected function _construct()
+    {
+        $this->_init('Smile\Offer\Model\ResourceModel\Offer');
+    }
+
+    /**
      * Validate offer data
      *
      * @param \Magento\Framework\DataObject $dataObject The Offer
@@ -230,6 +240,44 @@ class Offer extends AbstractModel implements OfferInterface, IdentityInterface
     private function validateData(\Magento\Framework\DataObject $dataObject)
     {
         $result = [];
+
+        $validateDateResult = $this->validateDateFields($dataObject);
+
+        if (true !== $validateDateResult) {
+            return $validateDateResult;
+        }
+
+        if (!$dataObject->hasData(OfferInterface::PRODUCT_ID)) {
+            $result[] = __('Product is required.');
+        }
+
+        if (is_array($dataObject->getData(OfferInterface::PRODUCT_ID))) {
+            $data = array_filter($dataObject->getData(OfferInterface::PRODUCT_ID));
+            if (!isset($data[OfferInterface::PRODUCT_ID]) || ($data[OfferInterface::PRODUCT_ID] == null)) {
+                $result[] = __('Product is required.');
+            }
+        }
+
+        if (!$dataObject->hasData(OfferInterface::SELLER_ID)) {
+            $result[] = __('Seller is required.');
+        }
+
+        if (empty($result)) {
+            return true;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Validate offer date data
+     *
+     * @param \Magento\Framework\DataObject $dataObject The Offer
+     *
+     * @return bool|string[] - return true if validation passed successfully. Array with errors description otherwise
+     */
+    private function validateDateFields(\Magento\Framework\DataObject $dataObject)
+    {
         $fromDate = $toDate = null;
 
         if ($dataObject->hasStartDate() && $dataObject->hasEndDate()) {
@@ -246,28 +294,10 @@ class Offer extends AbstractModel implements OfferInterface, IdentityInterface
             }
         }
 
-        if (!$dataObject->hasData(OfferInterface::PRODUCT_ID)) {
-            $result[] = __('Product is required.');
-        }
-
-        if (!$dataObject->hasData(OfferInterface::SELLER_ID)) {
-            $result[] = __('Seller is required.');
-        }
-
         if (empty($result)) {
             return true;
         }
 
         return $result;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @SuppressWarnings(PHPMD.CamelCaseMethodName) Method is inherited
-     */
-    protected function _construct()
-    {
-        $this->_init('Smile\Offer\Model\ResourceModel\Offer');
     }
 }

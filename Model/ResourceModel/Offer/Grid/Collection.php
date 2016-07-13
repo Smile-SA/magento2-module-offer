@@ -47,7 +47,7 @@ class Collection extends \Smile\Offer\Model\ResourceModel\Offer\Collection
     /**
      * @var array an array of external entities attributes to add to the current collection.
      */
-    private $selectEntityAttributes = [];
+    private $fieldAlias = [];
 
     /**
      * Collection constructor.
@@ -89,7 +89,15 @@ class Collection extends \Smile\Offer\Model\ResourceModel\Offer\Collection
      */
     public function addProductSkuToSelect($alias = null)
     {
-        $columns = (null === $alias) ? ["sku"] : [$alias => "sku"];
+        $skuField = \Magento\Catalog\Model\Product::SKU;
+
+        if (isset($this->fieldAlias[\Magento\Catalog\Model\Product::ENTITY][$skuField])) {
+            return $this;
+        }
+
+        $columns = (null === $alias) ? [$skuField => $skuField] : [$alias => $skuField];
+
+        $this->fieldAlias[\Magento\Catalog\Model\Product::ENTITY][$skuField] = (null === $alias) ? $skuField : $alias;
 
         $this->getSelect()->joinLeft(
             ["cpe" => $this->getTable("catalog_product_entity")],
@@ -98,6 +106,18 @@ class Collection extends \Smile\Offer\Model\ResourceModel\Offer\Collection
         );
 
         return $this;
+    }
+
+    /**
+     * Filter the collection for a given SKU
+     *
+     * @param array $condition A SQL Condition
+     */
+    public function setSkuFilter($condition)
+    {
+        $this->addProductSkuToSelect();
+        $field = $this->fieldAlias[\Magento\Catalog\Model\Product::ENTITY][\Magento\Catalog\Model\Product::SKU];
+        $this->addFieldToFilter($field, $condition);
     }
 
     /**
@@ -113,13 +133,18 @@ class Collection extends \Smile\Offer\Model\ResourceModel\Offer\Collection
      */
     public function addEntityAttributeToSelect($entityType, $attributeCode, $alias = null, $storeId = null)
     {
-        $columns = (null === $alias) ? [$attributeCode => 'value'] : [$alias => 'value'];
+        if (isset($this->fieldAlias[$entityType][$attributeCode])) {
+            return $this;
+        }
 
+        $columns       = (null === $alias) ? [$attributeCode => 'value'] : [$alias => 'value'];
         $attribute     = $this->eavConfig->getAttribute($entityType, $attributeCode);
         $entity        = $this->eavEntityFactory->create()->setType($entityType);
         $entityIdField = $entity->getEntityIdField();
         $foreignKey    = $this->getForeignKeyByEntityType($entityType);
         $idField       = OfferInterface::OFFER_ID;
+
+        $this->fieldAlias[$entityType][$attributeCode] = $alias;
 
         if ($attribute && !$attribute->isStatic()) {
             $backendTable        = $attribute->getBackendTable();
@@ -142,13 +167,27 @@ class Collection extends \Smile\Offer\Model\ResourceModel\Offer\Collection
                     $this->getConnection()->quoteInto("{$attributeTableAlias}_s.store_id = ?", $storeId),
                 ];
 
-                $this->getSelect()->joinLeft(['t_s' => $backendTable], implode(' AND ', $joinCondition), []);
+                $this->getSelect()->joinLeft(["{$attributeTableAlias}_s" => $backendTable], implode(' AND ', $joinCondition), []);
                 $storeCondition = $this->getConnection()->getIfNullSql("{$attributeTableAlias}_s.store_id", \Magento\Store\Model\Store::DEFAULT_STORE_ID);
             }
 
             $this->getSelect()->where("{$attributeTableAlias}_d.store_id = ?", $storeCondition);
             $this->getSelect()->group("main_table.{$idField}");
         }
+    }
+
+    /**
+     * Append filter on an external entity attribute (retailer or product).
+     *
+     * @param string $entityType The entity type
+     * @param string $field      The field
+     * @param array  $condition  The SQL Condition
+     */
+    public function addEntityAttributeFilter($entityType, $field, $condition)
+    {
+        $attributeTableAlias = $this->getEntityAttributeTableAlias($entityType, $field);
+        $field = $attributeTableAlias . "_d.value";
+        $this->addFieldToFilter($field, $condition);
     }
 
     /**
@@ -182,6 +221,11 @@ class Collection extends \Smile\Offer\Model\ResourceModel\Offer\Collection
      */
     private function getEntityAttributeTableAlias($entityType, $attributeCode)
     {
-        return $entityType . "_" . $attributeCode;
+        $field = $attributeCode;
+        if (isset($this->fieldAlias[$entityType][$attributeCode])) {
+            $field = $this->fieldAlias[$entityType][$attributeCode];
+        }
+
+        return $entityType . "_" . $field;
     }
 }

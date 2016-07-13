@@ -246,7 +246,19 @@ class Offer extends AbstractModel implements OfferInterface, IdentityInterface
             }
         }
 
-        return !empty($result) ? $result : true;
+        if (!$dataObject->hasData(OfferInterface::PRODUCT_ID)) {
+            $result[] = __('Product is required.');
+        }
+
+        if (!$dataObject->hasData(OfferInterface::SELLER_ID)) {
+            $result[] = __('Seller is required.');
+        }
+
+        if (empty($result)) {
+            return true;
+        }
+
+        return $result;
     }
 
     /**

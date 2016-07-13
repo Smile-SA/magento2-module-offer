@@ -206,6 +206,14 @@ class Offer extends AbstractModel implements OfferInterface, IdentityInterface
                 $value = new \DateTime($value);
             }
 
+            // @TODO : This part is messy and needs to be refactored.
+            if ($key === OfferInterface::PRODUCT_ID && $value) {
+                if (is_array($value)) {
+                    $value = current($value);
+                }
+                $value = str_replace("product/", "", $value);
+            }
+
             $this->setData($key, $value);
         }
 

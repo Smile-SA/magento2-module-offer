@@ -84,6 +84,7 @@ class Offer extends AbstractDb
      */
     public function save(AbstractModel $object)
     {
+        $this->_beforeSave($object);
         $this->entityManager->save($object);
 
         return $this;
@@ -118,6 +119,24 @@ class Offer extends AbstractDb
         $this->_init($metadata->getEntityTable(), $metadata->getIdentifierField());
     }
 
+    /**
+     * Prepare offer's active "from" and "to" dates
+     *
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName) Method is inherited.
+     *
+     * @param \Magento\Framework\Model\AbstractModel $object The offer being saved
+     *
+     * @return $this
+     */
+    protected function _beforeSave(AbstractModel $object)
+    {
+        $this->resolveDate($object, OfferInterface::START_DATE);
+        $this->resolveDate($object, OfferInterface::END_DATE);
+
+        parent::_beforeSave($object);
+
+        return $this;
+    }
 
     /**
      * Retrieve Offer Id by field value
@@ -151,5 +170,24 @@ class Offer extends AbstractDb
         }
 
         return $entityId;
+    }
+
+    /**
+     * Resolve date field of the object.
+     *
+     * @param \Magento\Framework\Model\AbstractModel $object         The offer
+     * @param string                                 $dateIdentifier The date field identifier
+     *
+     * @return void
+     */
+    private function resolveDate(\Magento\Framework\Model\AbstractModel $object, $dateIdentifier)
+    {
+        $date = $object->getData($dateIdentifier);
+
+        if ($date instanceof \DateTime) {
+            $object->setData($dateIdentifier, $date->format('Y-m-d H:i:s'));
+        } elseif (!is_string($date) || empty($date)) {
+            $object->setData($dateIdentifier, null);
+        }
     }
 }

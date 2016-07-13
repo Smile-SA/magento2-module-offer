@@ -17,6 +17,7 @@ namespace Smile\Offer\Model;
 use Smile\Offer\Api\Data\OfferInterface;
 use Magento\Framework\Model\AbstractModel;
 use Magento\Framework\DataObject\IdentityInterface;
+use Symfony\Component\Config\Definition\Exception\Exception;
 
 /**
  * Offer Model
@@ -180,6 +181,64 @@ class Offer extends AbstractModel implements OfferInterface, IdentityInterface
     public function getIdentities()
     {
         return [self::CACHE_TAG . '_' . $this->getId()];
+    }
+
+    /**
+     * Initialize offer  model data from array.
+     * Convert Date Fields to proper DateTime objects.
+     *
+     * @param array $data The data
+     *
+     * @return $this
+     *
+     * @throws \Exception
+     */
+    public function loadPost(array $data)
+    {
+        $validationResults = $this->validateData(new \Magento\Framework\DataObject($data));
+        if ($validationResults !== true) {
+            throw new \Exception(implode($validationResults));
+        }
+
+        $dateFields = [OfferInterface::START_DATE, OfferInterface::END_DATE];
+        foreach ($data as $key => $value) {
+            if (in_array($key, $dateFields) && $value) {
+                $value = new \DateTime($value);
+            }
+
+            $this->setData($key, $value);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Validate offer data
+     *
+     * @param \Magento\Framework\DataObject $dataObject The Offer
+     *
+     * @return bool|string[] - return true if validation passed successfully. Array with errors description otherwise
+     */
+    private function validateData(\Magento\Framework\DataObject $dataObject)
+    {
+        $result = [];
+        $fromDate = $toDate = null;
+
+        if ($dataObject->hasStartDate() && $dataObject->hasEndDate()) {
+            $fromDate = $dataObject->getStartDate();
+            $toDate = $dataObject->getEndDate();
+        }
+
+        if ($fromDate && $toDate) {
+            $fromDate = new \DateTime($fromDate);
+            $toDate = new \DateTime($toDate);
+
+            if ($fromDate > $toDate) {
+                $result[] = __('End Date must follow Start Date.');
+            }
+        }
+
+        return !empty($result) ? $result : true;
     }
 
     /**

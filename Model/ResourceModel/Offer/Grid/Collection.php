@@ -24,6 +24,7 @@ use Psr\Log\LoggerInterface;
 use Magento\Eav\Model\Config;
 use Magento\Eav\Model\EntityFactory;
 use Smile\Offer\Api\Data\OfferInterface;
+use Smile\Seller\Api\Data\SellerInterfaceFactory;
 
 /**
  * Offer Grid Collection
@@ -52,15 +53,17 @@ class Collection extends \Smile\Offer\Model\ResourceModel\Offer\Collection
     /**
      * Collection constructor.
      *
-     * @param EntityFactoryInterface $entityFactory    Entity Factory
-     * @param LoggerInterface        $logger           Logger Interface
-     * @param FetchStrategyInterface $fetchStrategy    Fetch Strategy
-     * @param ManagerInterface       $eventManager     Event Manager
-     * @param MetadataPool           $metadataPool     Metadata Pool
-     * @param Config                 $eavConfig        EAV Configuration
-     * @param EntityFactory          $eavEntityFactory EAV ENtity Factory
-     * @param AdapterInterface|null  $connection       Database Connection
-     * @param AbstractDb|null        $resource         Resource Model
+     * @param EntityFactoryInterface $entityFactory          Entity Factory
+     * @param LoggerInterface        $logger                 Logger Interface
+     * @param FetchStrategyInterface $fetchStrategy          Fetch Strategy
+     * @param ManagerInterface       $eventManager           Event Manager
+     * @param MetadataPool           $metadataPool           Metadata Pool
+     * @param SellerInterfaceFactory $sellerInterfaceFactory Seller Interface
+     * @param Config                 $eavConfig              EAV Configuration
+     * @param EntityFactory          $eavEntityFactory       EAV ENtity Factory
+     * @param AdapterInterface|null  $connection             Database Connection
+     * @param AbstractDb|null        $resource               Resource Model
+     * @param string|null            $sellerType             The seller type to filter on. If Any.
      */
     public function __construct(
         EntityFactoryInterface $entityFactory,
@@ -68,12 +71,24 @@ class Collection extends \Smile\Offer\Model\ResourceModel\Offer\Collection
         FetchStrategyInterface $fetchStrategy,
         ManagerInterface $eventManager,
         MetadataPool $metadataPool,
+        SellerInterfaceFactory $sellerInterfaceFactory,
         Config $eavConfig,
         EntityFactory $eavEntityFactory,
         $connection = null,
-        $resource = null
+        $resource = null,
+        $sellerType = null
     ) {
-        parent::__construct($entityFactory, $logger, $fetchStrategy, $eventManager, $metadataPool, $connection, $resource);
+        parent::__construct(
+            $entityFactory,
+            $logger,
+            $fetchStrategy,
+            $eventManager,
+            $metadataPool,
+            $sellerInterfaceFactory,
+            $connection,
+            $resource,
+            $sellerType
+        );
 
         $this->eavConfig  = $eavConfig;
         $this->eavEntityFactory = $eavEntityFactory;

@@ -21,7 +21,9 @@ use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
 use \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
 use Psr\Log\LoggerInterface;
+use Smile\Offer\Api\Data\OfferInterface;
 use Smile\Seller\Api\Data\SellerInterface;
+use Smile\Seller\Api\Data\SellerInterfaceFactory;
 
 /**
  * Offer Collection
@@ -38,15 +40,22 @@ class Collection extends AbstractCollection
     private $metadataPool;
 
     /**
+     * @var \Smile\Seller\Api\Data\SellerInterfaceFactory
+     */
+    private $sellerFactory;
+
+    /**
      * Collection constructor.
      *
-     * @param EntityFactoryInterface $entityFactory Entity Factory
-     * @param LoggerInterface        $logger        Logger Interface
-     * @param FetchStrategyInterface $fetchStrategy Fetch Strategy
-     * @param ManagerInterface       $eventManager  Event Manager
-     * @param MetadataPool           $metadataPool  Metadata Pool
-     * @param AdapterInterface|null  $connection    Database Connection
-     * @param AbstractDb|null        $resource      Resource Model
+     * @param EntityFactoryInterface $entityFactory          Entity Factory
+     * @param LoggerInterface        $logger                 Logger Interface
+     * @param FetchStrategyInterface $fetchStrategy          Fetch Strategy
+     * @param ManagerInterface       $eventManager           Event Manager
+     * @param MetadataPool           $metadataPool           Metadata Pool
+     * @param SellerInterfaceFactory $sellerInterfaceFactory Seller Interface
+     * @param AdapterInterface|null  $connection             Database Connection
+     * @param AbstractDb|null        $resource               Resource Model
+     * @param string|null            $sellerType             The seller type to filter on. If Any.
      */
     public function __construct(
         EntityFactoryInterface $entityFactory,
@@ -54,11 +63,15 @@ class Collection extends AbstractCollection
         FetchStrategyInterface $fetchStrategy,
         ManagerInterface $eventManager,
         MetadataPool $metadataPool,
+        SellerInterfaceFactory $sellerInterfaceFactory,
         AdapterInterface $connection = null,
-        AbstractDb $resource = null
+        AbstractDb $resource = null,
+        $sellerType = null
     ) {
         parent::__construct($entityFactory, $logger, $fetchStrategy, $eventManager, $connection, $resource);
-        $this->metadataPool = $metadataPool;
+        $this->metadataPool  = $metadataPool;
+        $this->sellerFactory = $sellerInterfaceFactory;
+        $this->addSellerTypeFilter($sellerType);
     }
 
     /**
@@ -70,7 +83,22 @@ class Collection extends AbstractCollection
      */
     public function addSellerTypeFilter($sellerType)
     {
-        $sellerMetadata = $this->metadataPool->getMetadata(SellerInterface::ENTITY);
+        if (null !== $sellerType) {
+            $sellerMetadata = $this->metadataPool->getMetadata(SellerInterface::class);
+            $sellerResource = $this->sellerFactory->create()->getResource();
+            $attributeSetId = $sellerResource->getAttributeSetIdByName($sellerType);
+            $sellerTable    = $sellerMetadata->getEntityTable();
+            $sellerPkName   = $sellerMetadata->getIdentifierField();
+
+            if (null !== $attributeSetId) {
+                $this->getSelect()->joinInner(
+                    $this->getTable($sellerTable),
+                    new \Zend_Db_Expr("{$sellerTable}.{$sellerPkName} = main_table." . OfferInterface::SELLER_ID)
+                );
+
+                $this->getSelect()->where("{$sellerTable}.attribute_set_id = ?", (int) $attributeSetId);
+            }
+        }
     }
 
     /**
@@ -84,5 +112,4 @@ class Collection extends AbstractCollection
     {
         $this->_init('Smile\Offer\Model\Offer', 'Smile\Offer\Model\ResourceModel\Offer');
     }
-
 }

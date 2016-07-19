@@ -206,11 +206,7 @@ class Offer extends AbstractModel implements OfferInterface, IdentityInterface
                 $value = new \DateTime($value);
             }
 
-            // @TODO : This part is messy and needs to be refactored.
             if ($key === OfferInterface::PRODUCT_ID && $value) {
-                if (is_array($value)) {
-                    $value = current($value);
-                }
                 $value = str_replace("product/", "", $value);
             }
 
@@ -247,15 +243,10 @@ class Offer extends AbstractModel implements OfferInterface, IdentityInterface
             return $validateDateResult;
         }
 
-        if (!$dataObject->hasData(OfferInterface::PRODUCT_ID)) {
+        if (!$dataObject->hasData(OfferInterface::PRODUCT_ID)
+            || ("" == $dataObject->getData(OfferInterface::PRODUCT_ID) )
+        ) {
             $result[] = __('Product is required.');
-        }
-
-        if (is_array($dataObject->getData(OfferInterface::PRODUCT_ID))) {
-            $data = array_filter($dataObject->getData(OfferInterface::PRODUCT_ID));
-            if (!isset($data[OfferInterface::PRODUCT_ID]) || ($data[OfferInterface::PRODUCT_ID] == null)) {
-                $result[] = __('Product is required.');
-            }
         }
 
         if (!$dataObject->hasData(OfferInterface::SELLER_ID)) {

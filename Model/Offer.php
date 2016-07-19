@@ -184,6 +184,26 @@ class Offer extends AbstractModel implements OfferInterface, IdentityInterface
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function getOverlapOffers()
+    {
+        if (!$this->isAvailable()) {
+            return [];
+        }
+
+        $overlapCollection = $this->getCollection()
+            ->addFieldToFilter(OfferInterface::OFFER_ID, ["neq" => (int) $this->getId()])
+            ->addFieldToFilter(OfferInterface::SELLER_ID, ["eq" => (int) $this->getSellerId()])
+            ->addFieldToFilter(OfferInterface::PRODUCT_ID, ["eq" => (int) $this->getProductId()])
+            ->addFieldToFilter(OfferInterface::IS_AVAILABLE, ["eq" => (int) true])
+            ->addFieldToFilter(OfferInterface::START_DATE, ["lt" => $this->getEndDate()])
+            ->addFieldToFilter(OfferInterface::END_DATE, ["gteq" => $this->getStartDate()]);
+
+        return $overlapCollection->getItems();
+    }
+
+    /**
      * Initialize offer  model data from array.
      * Convert Date Fields to proper DateTime objects.
      *

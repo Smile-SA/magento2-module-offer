@@ -188,4 +188,11 @@ interface OfferInterface extends \Magento\Framework\Api\ExtensibleDataInterface
      * @return \Smile\Offer\Api\Data\OfferInterface
      */
     public function setEndDate($endDate);
+
+    /**
+     * Retrieve other offers overlapping the current one.
+     *
+     * @return \Smile\Offer\Api\Data\OfferInterface[]
+     */
+    public function getOverlapOffers();
 }

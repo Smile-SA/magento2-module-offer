@@ -22,6 +22,8 @@
     <preference for="Smile\Offer\Api\Data\OfferSearchResultsInterface" type="Magento\Framework\Api\SearchResults" />
 
     <preference for="Smile\Offer\Api\OfferRepositoryInterface" type="Smile\Offer\Model\OfferRepository" />
+    
+    <preference for="Smile\Offer\Api\OfferManagementInterface" type="Smile\Offer\Model\OfferManagement" />
 
     <preference for="Smile\Offer\Model\Locator\LocatorInterface" type="Smile\Offer\Model\Locator\RegistryLocator"/>
 

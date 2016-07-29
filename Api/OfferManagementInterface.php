@@ -13,6 +13,8 @@
  */
 namespace Smile\Offer\Api;
 
+use Smile\Offer\Api\Data\OfferInterface;
+
 /**
  * Offer Management Interface
  *
@@ -35,7 +37,7 @@ interface OfferManagementInterface
      * @param int    $productId The product Id
      * @param string $date      A date
      *
-     * @return mixed
+     * @return OfferInterface[]
      */
     public function getProductOffers($productId, $date);
 
@@ -45,7 +47,7 @@ interface OfferManagementInterface
      * @param int    $sellerId The seller Id
      * @param string $date     A date
      *
-     * @return mixed
+     * @return OfferInterface[]
      */
     public function getSellerOffers($sellerId, $date);
 
@@ -56,7 +58,7 @@ interface OfferManagementInterface
      * @param int    $sellerId  The seller Id
      * @param string $date      The date
      *
-     * @return mixed
+     * @return OfferInterface
      */
     public function getOffer($productId, $sellerId, $date);
 }

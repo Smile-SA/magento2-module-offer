@@ -64,25 +64,25 @@ class OfferData implements DatasourceInterface
     private function processOfferPrices($offerData, $productData)
     {
         $defaultPriceData = [];
-
-        foreach ($productData['price'] as $currentPriceData) {
-            if ($currentPriceData['customer_group_id'] == CustomerGroupInterface::NOT_LOGGED_IN_ID) {
-                $defaultPriceData = $currentPriceData;
+        if (isset($productData['price'])) {
+            foreach ($productData['price'] as $currentPriceData) {
+                if ($currentPriceData['customer_group_id'] == CustomerGroupInterface::NOT_LOGGED_IN_ID) {
+                    $defaultPriceData = $currentPriceData;
+                }
             }
+
+            $offerData = array_filter($offerData);
+            $offerData['original_price'] = isset($offerData['price']) ? $offerData['price'] : $defaultPriceData['original_price'];
+
+            if (isset($offerData['special_price'])) {
+                $offerData['price'] = min($offerData['price'], $offerData['special_price']);
+                unset($offerData['special_price']);
+            } else {
+                $offerData['price'] = $defaultPriceData['price'];
+            }
+
+            $offerData['is_discount'] = $offerData['price'] < $offerData['original_price'];
         }
-
-        $offerData = array_filter($offerData);
-        $offerData['original_price'] = isset($offerData['price']) ? $offerData['price'] : $defaultPriceData['original_price'];
-
-        if (isset($offerData['special_price'])) {
-            $offerData['price'] = min($offerData['price'], $offerData['special_price']);
-            unset($offerData['special_price']);
-        } else {
-            $offerData['price'] = $defaultPriceData['price'];
-        }
-
-        $offerData['is_discount'] = $offerData['price'] < $offerData['original_price'];
-
 
         return $offerData;
     }

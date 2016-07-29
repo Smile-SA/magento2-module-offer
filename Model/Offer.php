@@ -148,7 +148,13 @@ class Offer extends AbstractModel implements OfferInterface, IdentityInterface
      */
     public function setPrice($price)
     {
-        return $this->setData(self::PRICE, $price);
+        $this->setData(self::PRICE, $price);
+
+        if (empty($price)) {
+            $this->unsetData(self::PRICE);
+        }
+
+        return $this;
     }
 
     /**
@@ -156,7 +162,13 @@ class Offer extends AbstractModel implements OfferInterface, IdentityInterface
      */
     public function setSpecialPrice($price)
     {
-        return $this->setData(self::SPECIAL_PRICE, $price);
+        $this->setData(self::SPECIAL_PRICE, $price);
+
+        if (empty($price)) {
+            $this->unsetData(self::SPECIAL_PRICE);
+        }
+
+        return $this;
     }
 
     /**
@@ -231,6 +243,10 @@ class Offer extends AbstractModel implements OfferInterface, IdentityInterface
             }
 
             $this->setData($key, $value);
+
+            if (in_array($key, [self::PRICE, self::SPECIAL_PRICE]) && empty($value)) {
+                $this->unsetData($key);
+            }
         }
 
         return $this;

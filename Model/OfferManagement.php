@@ -16,9 +16,8 @@ namespace Smile\Offer\Model;
 
 use Smile\Offer\Api\OfferManagementInterface;
 use Smile\Offer\Api\Data\OfferInterfaceFactory as OfferFactory;
-use Smile\Offer\Api\OfferRepositoryInterface as OfferRepository;
+use Smile\Offer\Api\OfferRepositoryInterface;
 use Smile\Offer\Model\ResourceModel\Offer\CollectionFactory as OfferCollectionFactory;
-use Smile\Offer\Api\Data\OfferInterface;
 
 /**
  * Offer Management
@@ -50,7 +49,7 @@ class OfferManagement implements OfferManagementInterface
      * @param \Smile\Offer\Api\OfferRepositoryInterface   $offerRepository Offer Repository
      * @param \Smile\Offer\Api\Data\OfferInterfaceFactory $offerFactory    Offer Factory
      */
-    public function __construct(OfferRepository $offerRepository, OfferFactory $offerFactory, OfferCollectionFactory $offerCollectionFactory)
+    public function __construct(OfferRepositoryInterface $offerRepository, OfferFactory $offerFactory, OfferCollectionFactory $offerCollectionFactory)
     {
         $this->offerFactory    = $offerFactory;
         $this->offerRepository = $offerRepository;

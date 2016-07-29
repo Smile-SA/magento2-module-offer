@@ -17,6 +17,8 @@ namespace Smile\Offer\Model;
 use Smile\Offer\Api\OfferManagementInterface;
 use Smile\Offer\Api\Data\OfferInterfaceFactory as OfferFactory;
 use Smile\Offer\Api\OfferRepositoryInterface as OfferRepository;
+use Smile\Offer\Model\ResourceModel\Offer\CollectionFactory as OfferCollectionFactory;
+use Smile\Offer\Api\Data\OfferInterface;
 
 /**
  * Offer Management
@@ -38,15 +40,21 @@ class OfferManagement implements OfferManagementInterface
     private $offerRepository;
 
     /**
+     * @var \Smile\Offer\Model\ResourceModel\Offer\CollectionFactory
+     */
+    private $offerCollectionFactory;
+
+    /**
      * OfferManagement constructor.
      *
      * @param \Smile\Offer\Api\OfferRepositoryInterface   $offerRepository Offer Repository
      * @param \Smile\Offer\Api\Data\OfferInterfaceFactory $offerFactory    Offer Factory
      */
-    public function __construct(OfferRepository $offerRepository, OfferFactory $offerFactory)
+    public function __construct(OfferRepository $offerRepository, OfferFactory $offerFactory, OfferCollectionFactory $offerCollectionFactory)
     {
         $this->offerFactory    = $offerFactory;
         $this->offerRepository = $offerRepository;
+        $this->offerCollectionFactory = $offerCollectionFactory;
     }
 
    /**
@@ -83,6 +91,15 @@ class OfferManagement implements OfferManagementInterface
      */
     public function getOffer($productId, $sellerId, $date)
     {
-        // TODO: Auto-generated method stub
+        /**
+         * @var \Smile\Offer\Model\ResourceModel\Offer\Collection $offerCollection
+         */
+        $offerCollection = $this->offerCollectionFactory->create();
+
+        $offerCollection->addProductFilter($productId)
+            ->addSellerFilter($sellerId)
+            ->addDateFilter($date);
+
+        return $offerCollection->getFirstItem();
     }
 }

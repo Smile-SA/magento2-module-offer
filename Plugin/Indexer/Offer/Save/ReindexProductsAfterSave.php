@@ -6,7 +6,7 @@
  *
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalog
- * @author    Romain Ruaud <romain.ruaud@smile.fr>
+ * @author    Sébastien Le Guellec <sebastien.leguellec@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
@@ -16,7 +16,7 @@ namespace Smile\Offer\Plugin\Indexer\Offer\Save;
 use Smile\ElasticsuiteCatalog\Plugin\Indexer\AbstractIndexerPlugin;
 
 /**
- * Plugin that proceed products reindex after category reindexing
+ * Plugin that proceed products reindex after offer saving
  *
  * @category Smile
  * @package  Smile\ElasticsuiteCatalog
@@ -25,13 +25,14 @@ use Smile\ElasticsuiteCatalog\Plugin\Indexer\AbstractIndexerPlugin;
 class ReindexProductsAfterSave extends AbstractIndexerPlugin
 {
     /**
-     * Reindex category's products after reindexing the category
+     * Reindex products after saving offer
      *
-     * @param \Magento\Catalog\Model\Category $subject The cateogry being reindexed
-     * @param callable                        $proceed The parent function we are plugged on
+     * @param \Smile\Offer\Model\ResourceModel\Offer $resource The offer resource being saved
+     * @param callable                               $proceed  The parent function we are plugged on
      *                                                 : Magento\Catalog\Model\Category::reindex()
+     * @param \Smile\Offer\Model\Offer               $subject  The offer being saved
      *
-     * @return \Magento\Catalog\Model\Category
+     * @return \Smile\Offer\Model\Offer
      */
     public function aroundSave(
         \Smile\Offer\Model\ResourceModel\Offer $resource,

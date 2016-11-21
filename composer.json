@@ -9,7 +9,7 @@
         "magento/module-catalog": "*",
         "magento/magento-composer-installer": "*",
         "smile/module-seller" : "*",
-        "elasticsuite/elasticsuite" : "^2.2.0"
+        "smile/elasticsuite" : "^2.2.0"
     },
     "license": "OSL-3.0",
     "authors": [

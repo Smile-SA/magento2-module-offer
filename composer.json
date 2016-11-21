@@ -8,7 +8,8 @@
         "magento/framework": "*",
         "magento/module-catalog": "*",
         "magento/magento-composer-installer": "*",
-        "smile/module-seller" : "*"
+        "smile/module-seller" : "*",
+        "elasticsuite/elasticsuite" : "^2.2.*"
     },
     "license": "OSL-3.0",
     "authors": [

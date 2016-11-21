@@ -22,7 +22,7 @@
     <preference for="Smile\Offer\Api\Data\OfferSearchResultsInterface" type="Magento\Framework\Api\SearchResults" />
 
     <preference for="Smile\Offer\Api\OfferRepositoryInterface" type="Smile\Offer\Model\OfferRepository" />
-    
+
     <preference for="Smile\Offer\Api\OfferManagementInterface" type="Smile\Offer\Model\OfferManagement" />
 
     <preference for="Smile\Offer\Model\Locator\LocatorInterface" type="Smile\Offer\Model\Locator\RegistryLocator"/>
@@ -44,5 +44,9 @@
                 <item name="Smile\Offer\Api\Data\OfferInterface" xsi:type="string">Magento\Framework\EntityManager\AbstractModelHydrator</item>
             </argument>
         </arguments>
+    </type>
+
+    <type name="Smile\Offer\Model\ResourceModel\Offer">
+        <plugin name="smile_offer_catalog_reindex_products_after_offer_reindex" type="\Smile\Offer\Plugin\Indexer\Offer\Save\ReindexProductsAfterSave" />
     </type>
 </config>

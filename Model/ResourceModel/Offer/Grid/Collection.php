@@ -197,62 +197,6 @@ class Collection extends \Smile\Offer\Model\ResourceModel\Offer\Collection
     }
 
     /**
-     * Adding a virtual "has_overlap" field on the collection select
-     *
-     * @param string $field The field
-     *
-     * @return $this;
-     */
-    public function addHasOverlapField($field)
-    {
-        if (isset($this->fieldAlias[$this->getMainTable()][self::HAS_OVERLAP_FIELD])) {
-            return $this;
-        }
-
-        $overlapTable = "{$this->getMainTable()}_overlap";
-        $joinConditions = [
-            new \Zend_Db_Expr("{$overlapTable}.offer_id != main_table.offer_id"),
-            new \Zend_Db_Expr("{$overlapTable}.product_id = main_table.product_id"),
-            new \Zend_Db_Expr("{$overlapTable}.seller_id = main_table.seller_id"),
-            new \Zend_Db_Expr("{$overlapTable}.is_available = 1"),
-            new \Zend_Db_Expr("{$overlapTable}.start_date < main_table.end_date"),
-            new \Zend_Db_Expr("{$overlapTable}.end_date >= main_table.start_date"),
-        ];
-
-        $this->getSelect()->joinLeft(
-            [$overlapTable => $this->getMainTable()],
-            new \Zend_Db_Expr(implode(" AND ", $joinConditions)),
-            [$field => new \Zend_Db_Expr("CASE WHEN COUNT({$overlapTable}.offer_id) > 0 THEN 1 ELSE 0 END")]
-        );
-
-        $this->fieldAlias[$this->getMainTable()][self::HAS_OVERLAP_FIELD] = $field;
-
-        return $this;
-    }
-
-    /**
-     * Adding a filter on the virtual "has_overlap" field
-     *
-     * @param string $field The field alias
-     * @param string $value The field value
-     *
-     * @return $this;
-     */
-    public function addHasOverlapFilter($field, $value)
-    {
-        $this->addHasOverlapField($field);
-
-        $overlapTable = "{$this->getMainTable()}_overlap";
-        if ((int) $value === 0) {
-            $this->getSelect()->having("COUNT({$overlapTable}.offer_id) = ?", (int) $value);
-        } elseif ((int) $value === 1) {
-            $this->getSelect()->having("COUNT({$overlapTable}.offer_id) > 0");
-        }
-
-        return $this;
-    }
-
-    /**
      * Append filter on an external entity attribute (retailer or product).
      *
      * @param string $entityType The entity type

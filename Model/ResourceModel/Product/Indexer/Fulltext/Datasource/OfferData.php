@@ -28,7 +28,7 @@ class OfferData extends Indexer
     /**
      * Load prices data for a list of product ids and a given store.
      *
-     * @param array   $productIds Product ids list.
+     * @param array $productIds Product ids list.
      *
      * @return array
      */

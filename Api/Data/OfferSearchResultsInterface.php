@@ -33,7 +33,7 @@ interface OfferSearchResultsInterface extends SearchResultsInterface
     /**
      * Set offers list.
      *
-     * @param \Smile\Offer\Api\Data\OfferInterface[] $items
+     * @param \Smile\Offer\Api\Data\OfferInterface[] $items The items
      *
      * @return $this
      */

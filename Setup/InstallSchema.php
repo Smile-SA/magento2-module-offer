@@ -92,20 +92,6 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => true],
                 'Offer price'
             )
-            ->addColumn(
-                OfferInterface::START_DATE,
-                \Magento\Framework\DB\Ddl\Table::TYPE_DATE,
-                null,
-                ['nullable' => true],
-                'Offer start date'
-            )
-            ->addColumn(
-                OfferInterface::END_DATE,
-                \Magento\Framework\DB\Ddl\Table::TYPE_DATE,
-                null,
-                ['nullable' => true],
-                'Offer end date'
-            )
             ->addForeignKey(
                 $setup->getFkName('smile_offer', OfferInterface::PRODUCT_ID, 'catalog_product_entity', 'entity_id'),
                 OfferInterface::PRODUCT_ID,

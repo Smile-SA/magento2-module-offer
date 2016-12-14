@@ -97,22 +97,6 @@ class Offer extends AbstractModel implements OfferInterface, IdentityInterface
     /**
      * {@inheritDoc}
      */
-    public function getStartDate()
-    {
-        return $this->getData(self::START_DATE);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getEndDate()
-    {
-        return $this->getData(self::END_DATE);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public function setId($id)
     {
         return $this->setData(self::OFFER_ID, $id);
@@ -174,45 +158,9 @@ class Offer extends AbstractModel implements OfferInterface, IdentityInterface
     /**
      * {@inheritDoc}
      */
-    public function setStartDate($startDate)
-    {
-        return $this->setData(self::START_DATE, $startDate);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setEndDate($endDate)
-    {
-        return $this->setData(self::END_DATE, $endDate);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public function getIdentities()
     {
         return [self::CACHE_TAG . '_' . $this->getId()];
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getOverlapOffers()
-    {
-        if (!$this->isAvailable()) {
-            return [];
-        }
-
-        $overlapCollection = $this->getCollection()
-            ->addFieldToFilter(OfferInterface::OFFER_ID, ["neq" => (int) $this->getId()])
-            ->addFieldToFilter(OfferInterface::SELLER_ID, ["eq" => (int) $this->getSellerId()])
-            ->addFieldToFilter(OfferInterface::PRODUCT_ID, ["eq" => (int) $this->getProductId()])
-            ->addFieldToFilter(OfferInterface::IS_AVAILABLE, ["eq" => (int) true])
-            ->addFieldToFilter(OfferInterface::START_DATE, ["lt" => $this->getEndDate()])
-            ->addFieldToFilter(OfferInterface::END_DATE, ["gteq" => $this->getStartDate()]);
-
-        return $overlapCollection->getItems();
     }
 
     /**
@@ -232,12 +180,7 @@ class Offer extends AbstractModel implements OfferInterface, IdentityInterface
             throw new \Exception(implode($validationResults));
         }
 
-        $dateFields = [OfferInterface::START_DATE, OfferInterface::END_DATE];
         foreach ($data as $key => $value) {
-            if (in_array($key, $dateFields) && $value) {
-                $value = new \DateTime($value);
-            }
-
             if ($key === OfferInterface::PRODUCT_ID && $value) {
                 $value = str_replace("product/", "", $value);
             }
@@ -273,12 +216,6 @@ class Offer extends AbstractModel implements OfferInterface, IdentityInterface
     {
         $result = [];
 
-        $validateDateResult = $this->validateDateFields($dataObject);
-
-        if (true !== $validateDateResult) {
-            return $validateDateResult;
-        }
-
         if (!$dataObject->hasData(OfferInterface::PRODUCT_ID)
             || ("" == $dataObject->getData(OfferInterface::PRODUCT_ID) )
         ) {
@@ -287,38 +224,6 @@ class Offer extends AbstractModel implements OfferInterface, IdentityInterface
 
         if (!$dataObject->hasData(OfferInterface::SELLER_ID)) {
             $result[] = __('Seller is required.');
-        }
-
-        if (empty($result)) {
-            return true;
-        }
-
-        return $result;
-    }
-
-    /**
-     * Validate offer date data
-     *
-     * @param \Magento\Framework\DataObject $dataObject The Offer
-     *
-     * @return bool|string[] - return true if validation passed successfully. Array with errors description otherwise
-     */
-    private function validateDateFields(\Magento\Framework\DataObject $dataObject)
-    {
-        $fromDate = $toDate = null;
-
-        if ($dataObject->hasStartDate() && $dataObject->hasEndDate()) {
-            $fromDate = $dataObject->getStartDate();
-            $toDate = $dataObject->getEndDate();
-        }
-
-        if ($fromDate && $toDate) {
-            $fromDate = new \DateTime($fromDate);
-            $toDate = new \DateTime($toDate);
-
-            if ($fromDate > $toDate) {
-                $result[] = __('End Date must follow Start Date.');
-            }
         }
 
         if (empty($result)) {

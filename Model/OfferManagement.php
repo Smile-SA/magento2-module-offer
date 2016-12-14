@@ -72,7 +72,7 @@ class OfferManagement implements OfferManagementInterface
     /**
      * {@inheritDoc}
      */
-    public function getProductOffers($productId, $date)
+    public function getProductOffers($productId)
     {
         // TODO: Auto-generated method stub
     }
@@ -80,7 +80,7 @@ class OfferManagement implements OfferManagementInterface
     /**
      * {@inheritDoc}
      */
-    public function getSellerOffers($sellerId, $date)
+    public function getSellerOffers($sellerId)
     {
         // TODO: Auto-generated method stub
     }
@@ -88,7 +88,7 @@ class OfferManagement implements OfferManagementInterface
     /**
      * {@inheritDoc}
      */
-    public function getOffer($productId, $sellerId, $date)
+    public function getOffer($productId, $sellerId)
     {
         /**
          * @var \Smile\Offer\Model\ResourceModel\Offer\Collection $offerCollection
@@ -96,8 +96,7 @@ class OfferManagement implements OfferManagementInterface
         $offerCollection = $this->offerCollectionFactory->create();
 
         $offerCollection->addProductFilter($productId)
-            ->addSellerFilter($sellerId)
-            ->addDateFilter($date);
+            ->addSellerFilter($sellerId);
 
         return $offerCollection->getFirstItem();
     }

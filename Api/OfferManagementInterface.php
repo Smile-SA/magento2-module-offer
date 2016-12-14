@@ -34,31 +34,28 @@ interface OfferManagementInterface
     /**
      * Get Offers for a given product Id, and a given date.
      *
-     * @param int    $productId The product Id
-     * @param string $date      A date
+     * @param int $productId The product Id
      *
      * @return OfferInterface[]
      */
-    public function getProductOffers($productId, $date);
+    public function getProductOffers($productId);
 
     /**
      * Get Offers for a given seller Id, and a given date.
      *
-     * @param int    $sellerId The seller Id
-     * @param string $date     A date
+     * @param int $sellerId The seller Id
      *
      * @return OfferInterface[]
      */
-    public function getSellerOffers($sellerId, $date);
+    public function getSellerOffers($sellerId);
 
     /**
      * Get Offer by product, seller and date.
      *
-     * @param int    $productId The product Id
-     * @param int    $sellerId  The seller Id
-     * @param string $date      The date
+     * @param int $productId The product Id
+     * @param int $sellerId  The seller Id
      *
      * @return OfferInterface
      */
-    public function getOffer($productId, $sellerId, $date);
+    public function getOffer($productId, $sellerId);
 }

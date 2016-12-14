@@ -103,6 +103,13 @@ class Collection extends AbstractCollection
         }
     }
 
+    /**
+     * Filter offers by product Id
+     *
+     * @param int $productId The product Id
+     *
+     * @return $this
+     */
     public function addProductFilter($productId)
     {
         $this->addFieldToFilter(OfferInterface::PRODUCT_ID, $productId);
@@ -110,29 +117,16 @@ class Collection extends AbstractCollection
         return $this;
     }
 
+    /**
+     * Filter offers by seller Id
+     *
+     * @param int $sellerId The seller Id
+     *
+     * @return $this
+     */
     public function addSellerFilter($sellerId)
     {
         $this->addFieldToFilter(OfferInterface::SELLER_ID, $sellerId);
-
-        return $this;
-    }
-
-    public function addDateFilter($date)
-    {
-        $select = $this->getSelect();
-
-        $startDateConditions = [
-            'main_table.' . OfferInterface::START_DATE . ' IS NULL',
-            'main_table.' . OfferInterface::START_DATE . ' <= ?',
-        ];
-
-        $select->where(sprintf('(%s)', implode(' OR ', $startDateConditions)), $date);
-
-        $endDateConditions = [
-            'main_table.' . OfferInterface::END_DATE . ' IS NULL',
-            'main_table.' . OfferInterface::END_DATE . ' >= ?',
-        ];
-        $select->where(sprintf('(%s)', implode(' OR ', $endDateConditions)), $date);
 
         return $this;
     }

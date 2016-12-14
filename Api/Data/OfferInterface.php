@@ -52,16 +52,6 @@ interface OfferInterface extends \Magento\Framework\Api\ExtensibleDataInterface
     const SPECIAL_PRICE             = 'special_price';
 
     /**
-     * Start date field
-     */
-    const START_DATE                = 'start_date';
-
-    /**
-     * End Date field
-     */
-    const END_DATE                  = 'end_date';
-
-    /**
      * Get ID.
      *
      * @return int|null
@@ -102,20 +92,6 @@ interface OfferInterface extends \Magento\Framework\Api\ExtensibleDataInterface
      * @return float|null
      */
     public function getSpecialPrice();
-
-    /**
-     * Offer start date.
-     *
-     * @return string|null
-     */
-    public function getStartDate();
-
-    /**
-     * Offer end date.
-     *
-     * @return string|null
-     */
-    public function getEndDate();
 
     /**
      * Set ID.
@@ -170,29 +146,4 @@ interface OfferInterface extends \Magento\Framework\Api\ExtensibleDataInterface
      * @return \Smile\Offer\Api\Data\OfferInterface
      */
     public function setSpecialPrice($price);
-
-    /**
-     * Set offer start date.
-     *
-     * @param string|null $startDate Start date.
-     *
-     * @return \Smile\Offer\Api\Data\OfferInterface
-     */
-    public function setStartDate($startDate);
-
-    /**
-     * Set offer end date.
-     *
-     * @param string|null $endDate End date.
-     *
-     * @return \Smile\Offer\Api\Data\OfferInterface
-     */
-    public function setEndDate($endDate);
-
-    /**
-     * Retrieve other offers overlapping the current one.
-     *
-     * @return \Smile\Offer\Api\Data\OfferInterface[]
-     */
-    public function getOverlapOffers();
 }

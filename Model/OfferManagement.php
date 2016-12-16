@@ -46,11 +46,15 @@ class OfferManagement implements OfferManagementInterface
     /**
      * OfferManagement constructor.
      *
-     * @param \Smile\Offer\Api\OfferRepositoryInterface   $offerRepository Offer Repository
-     * @param \Smile\Offer\Api\Data\OfferInterfaceFactory $offerFactory    Offer Factory
+     * @param OfferRepositoryInterface $offerRepository        Offer Repository
+     * @param OfferFactory             $offerFactory           Offer Factory
+     * @param OfferCollectionFactory   $offerCollectionFactory Offer Collection Factory
      */
-    public function __construct(OfferRepositoryInterface $offerRepository, OfferFactory $offerFactory, OfferCollectionFactory $offerCollectionFactory)
-    {
+    public function __construct(
+        OfferRepositoryInterface $offerRepository,
+        OfferFactory $offerFactory,
+        OfferCollectionFactory $offerCollectionFactory
+    ) {
         $this->offerFactory    = $offerFactory;
         $this->offerRepository = $offerRepository;
         $this->offerCollectionFactory = $offerCollectionFactory;
@@ -74,7 +78,10 @@ class OfferManagement implements OfferManagementInterface
      */
     public function getProductOffers($productId)
     {
-        // TODO: Auto-generated method stub
+        $offerCollection = $this->offerCollectionFactory->create();
+        $offerCollection->addProductFilter($productId);
+
+        return $offerCollection->getItems();
     }
 
     /**
@@ -82,7 +89,10 @@ class OfferManagement implements OfferManagementInterface
      */
     public function getSellerOffers($sellerId)
     {
-        // TODO: Auto-generated method stub
+        $offerCollection = $this->offerCollectionFactory->create();
+        $offerCollection->addSellerFilter($sellerId);
+
+        return $offerCollection->getItems();
     }
 
     /**

@@ -96,11 +96,11 @@ interface OfferInterface extends \Magento\Framework\Api\ExtensibleDataInterface
     /**
      * Set ID.
      *
-     * @param int $id Offer id.
+     * @param int $offerId Offer id.
      *
      * @return \Smile\Offer\Api\Data\OfferInterface
      */
-    public function setId($id);
+    public function setId($offerId);
 
     /**
      * Set product id.

@@ -45,7 +45,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
                     'unsigned' => true,
                     'nullable' => true,
                     'default' => null,
-                    'comment' => 'Seller ID'
+                    'comment' => 'Seller ID',
                 ]
             );
 
@@ -56,7 +56,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
                     'type' => \Magento\Framework\DB\Ddl\Table::TYPE_DATE,
                     'nullable' => true,
                     'default' => null,
-                    'comment' => 'Pickup date'
+                    'comment' => 'Pickup date',
                 ]
             );
         }

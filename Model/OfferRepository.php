@@ -70,7 +70,6 @@ class OfferRepository implements OfferRepositoryInterface
         OfferFactory $offerFactory,
         OfferCollectionFactory $offerCollectionFactory,
         OfferSearchResultsInterfaceFactory $searchResultsFactory
-
     ) {
         $this->resource               = $resource;
         $this->offerFactory           = $offerFactory;

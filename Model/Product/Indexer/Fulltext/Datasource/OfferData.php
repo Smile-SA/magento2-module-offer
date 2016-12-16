@@ -2,11 +2,11 @@
 /**
  * DISCLAIMER
  *
- * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile\ElasticsuiteCatalog
+ * @package   Smile\Offer
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
@@ -23,20 +23,20 @@ use Magento\Customer\Api\Data\GroupInterface as CustomerGroupInterface;
  * Datasource used to append prices data to product during indexing.
  *
  * @category Smile
- * @package  Smile\ElasticsuiteCatalog
+ * @package  Smile\Offer
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class OfferData implements DatasourceInterface
 {
     /**
-     * @var \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\OfferData
+     * @var \Smile\Offer\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\OfferData
      */
     private $resourceModel;
 
     /**
      * Constructor.
      *
-     * @param ResourceModel      $resourceModel      Resource model
+     * @param ResourceModel $resourceModel Resource model
      */
     public function __construct(ResourceModel $resourceModel)
     {
@@ -61,6 +61,14 @@ class OfferData implements DatasourceInterface
         return $indexData;
     }
 
+    /**
+     * Process offer prices
+     *
+     * @param array $offerData   Offer Data
+     * @param array $productData Product Data
+     *
+     * @return array
+     */
     private function processOfferPrices($offerData, $productData)
     {
         $defaultPriceData = [];
@@ -74,11 +82,10 @@ class OfferData implements DatasourceInterface
             $offerData = array_filter($offerData);
             $offerData['original_price'] = isset($offerData['price']) ? $offerData['price'] : $defaultPriceData['original_price'];
 
+            $offerData['price'] = $defaultPriceData['price'];
             if (isset($offerData['special_price'])) {
                 $offerData['price'] = min($offerData['price'], $offerData['special_price']);
                 unset($offerData['special_price']);
-            } else {
-                $offerData['price'] = $defaultPriceData['price'];
             }
 
             $offerData['is_discount'] = $offerData['price'] < $offerData['original_price'];

@@ -97,9 +97,9 @@ class Offer extends AbstractModel implements OfferInterface, IdentityInterface
     /**
      * {@inheritDoc}
      */
-    public function setId($id)
+    public function setId($offerId)
     {
-        return $this->setData(self::OFFER_ID, $id);
+        return $this->setData(self::OFFER_ID, $offerId);
     }
 
     /**
@@ -124,7 +124,6 @@ class Offer extends AbstractModel implements OfferInterface, IdentityInterface
     public function setIsAvailable($availability)
     {
         return $this->setData(self::IS_AVAILABLE, $availability);
-
     }
 
     /**

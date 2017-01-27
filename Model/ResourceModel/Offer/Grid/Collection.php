@@ -1,7 +1,6 @@
 <?php
 /**
  * DISCLAIMER
- *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future.
  *
@@ -13,6 +12,7 @@
  */
 namespace Smile\Offer\Model\ResourceModel\Offer\Grid;
 
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Data\Collection\Db\FetchStrategyInterface;
 use Magento\Framework\Data\Collection\EntityFactoryInterface;
 use Magento\Framework\DB\Adapter\AdapterInterface;
@@ -36,16 +36,6 @@ use Smile\Seller\Api\Data\SellerInterfaceFactory;
 class Collection extends \Smile\Offer\Model\ResourceModel\Offer\Collection
 {
     /**
-     * Field used to materialize eventual overlapping for each item of the collection.
-     */
-    const HAS_OVERLAP_FIELD = "has_overlap";
-
-    /**
-     * @var Config
-     */
-    protected $eavConfig;
-
-    /**
      * @var EntityFactory
      */
     private $eavEntityFactory;
@@ -58,17 +48,15 @@ class Collection extends \Smile\Offer\Model\ResourceModel\Offer\Collection
     /**
      * Collection constructor.
      *
-     * @param EntityFactoryInterface $entityFactory          Entity Factory
-     * @param LoggerInterface        $logger                 Logger Interface
-     * @param FetchStrategyInterface $fetchStrategy          Fetch Strategy
-     * @param ManagerInterface       $eventManager           Event Manager
-     * @param MetadataPool           $metadataPool           Metadata Pool
-     * @param SellerInterfaceFactory $sellerInterfaceFactory Seller Interface
-     * @param Config                 $eavConfig              EAV Configuration
-     * @param EntityFactory          $eavEntityFactory       EAV ENtity Factory
-     * @param AdapterInterface|null  $connection             Database Connection
-     * @param AbstractDb|null        $resource               Resource Model
-     * @param string|null            $sellerType             The seller type to filter on. If Any.
+     * @param EntityFactoryInterface $entityFactory    Entity Factory
+     * @param LoggerInterface        $logger           Logger Interface
+     * @param FetchStrategyInterface $fetchStrategy    Fetch Strategy
+     * @param ManagerInterface       $eventManager     Event Manager
+     * @param MetadataPool           $metadataPool     Metadata Pool
+     * @param EntityFactory          $eavEntityFactory EAV ENtity Factory
+     * @param AdapterInterface|null  $connection       Database Connection
+     * @param AbstractDb|null        $resource         Resource Model
+     * @param string|null            $sellerEntity     The seller type to filter on. If Any.
      */
     public function __construct(
         EntityFactoryInterface $entityFactory,
@@ -76,12 +64,10 @@ class Collection extends \Smile\Offer\Model\ResourceModel\Offer\Collection
         FetchStrategyInterface $fetchStrategy,
         ManagerInterface $eventManager,
         MetadataPool $metadataPool,
-        SellerInterfaceFactory $sellerInterfaceFactory,
-        Config $eavConfig,
         EntityFactory $eavEntityFactory,
         $connection = null,
         $resource = null,
-        $sellerType = null
+        $sellerEntity = null
     ) {
         parent::__construct(
             $entityFactory,
@@ -89,13 +75,11 @@ class Collection extends \Smile\Offer\Model\ResourceModel\Offer\Collection
             $fetchStrategy,
             $eventManager,
             $metadataPool,
-            $sellerInterfaceFactory,
             $connection,
             $resource,
-            $sellerType
+            $sellerEntity
         );
 
-        $this->eavConfig  = $eavConfig;
         $this->eavEntityFactory = $eavEntityFactory;
     }
 
@@ -157,9 +141,10 @@ class Collection extends \Smile\Offer\Model\ResourceModel\Offer\Collection
             return $this;
         }
 
-        $columns       = (null === $alias) ? [$attributeCode => 'value'] : [$alias => 'value'];
-        $attribute     = $this->eavConfig->getAttribute($entityType, $attributeCode);
+        $columns = (null === $alias) ? [$attributeCode => 'value'] : [$alias => 'value'];
+
         $entity        = $this->eavEntityFactory->create()->setType($entityType);
+        $attribute     = $entity->getAttribute($attributeCode);
         $entityIdField = $entity->getEntityIdField();
         $foreignKey    = $this->getForeignKeyByEntityType($entityType);
         $idField       = OfferInterface::OFFER_ID;
@@ -167,7 +152,7 @@ class Collection extends \Smile\Offer\Model\ResourceModel\Offer\Collection
         $this->fieldAlias[$entityType][$attributeCode] = $alias;
 
         if ($attribute && !$attribute->isStatic()) {
-            $backendTable        = $attribute->getBackendTable();
+            $backendTable = $attribute->getBackendTable();
             $attributeTableAlias = $this->getEntityAttributeTableAlias($entityType, $attributeCode);
 
             // Join entity attribute value table.

@@ -13,6 +13,7 @@
 
 namespace Smile\Offer\Model\ResourceModel\Offer;
 
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Data\Collection\Db\FetchStrategyInterface;
 use Magento\Framework\Data\Collection\EntityFactoryInterface;
 use Magento\Framework\DB\Adapter\AdapterInterface;
@@ -22,8 +23,6 @@ use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
 use \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
 use Psr\Log\LoggerInterface;
 use Smile\Offer\Api\Data\OfferInterface;
-use Smile\Seller\Api\Data\SellerInterface;
-use Smile\Seller\Api\Data\SellerInterfaceFactory;
 
 /**
  * Offer Collection
@@ -40,22 +39,16 @@ class Collection extends AbstractCollection
     private $metadataPool;
 
     /**
-     * @var \Smile\Seller\Api\Data\SellerInterfaceFactory
-     */
-    private $sellerFactory;
-
-    /**
      * Collection constructor.
      *
-     * @param EntityFactoryInterface $entityFactory          Entity Factory
-     * @param LoggerInterface        $logger                 Logger Interface
-     * @param FetchStrategyInterface $fetchStrategy          Fetch Strategy
-     * @param ManagerInterface       $eventManager           Event Manager
-     * @param MetadataPool           $metadataPool           Metadata Pool
-     * @param SellerInterfaceFactory $sellerInterfaceFactory Seller Interface
-     * @param AdapterInterface|null  $connection             Database Connection
-     * @param AbstractDb|null        $resource               Resource Model
-     * @param string|null            $sellerType             The seller type to filter on. If Any.
+     * @param EntityFactoryInterface $entityFactory Entity Factory
+     * @param LoggerInterface        $logger        Logger Interface
+     * @param FetchStrategyInterface $fetchStrategy Fetch Strategy
+     * @param ManagerInterface       $eventManager  Event Manager
+     * @param MetadataPool           $metadataPool  Metadata Pool
+     * @param AdapterInterface|null  $connection    Database Connection
+     * @param AbstractDb|null        $resource      Resource Model
+     * @param string|null            $sellerEntity  The seller type to filter on. If Any.
      */
     public function __construct(
         EntityFactoryInterface $entityFactory,
@@ -63,32 +56,33 @@ class Collection extends AbstractCollection
         FetchStrategyInterface $fetchStrategy,
         ManagerInterface $eventManager,
         MetadataPool $metadataPool,
-        SellerInterfaceFactory $sellerInterfaceFactory,
         AdapterInterface $connection = null,
         AbstractDb $resource = null,
-        $sellerType = null
+        $sellerEntity = null
     ) {
         parent::__construct($entityFactory, $logger, $fetchStrategy, $eventManager, $connection, $resource);
         $this->metadataPool  = $metadataPool;
-        $this->sellerFactory = $sellerInterfaceFactory;
-        if ($sellerType !== null) {
-            $this->addSellerTypeFilter($sellerType);
+        if ($sellerEntity !== null) {
+            $this->addSellerTypeFilter($sellerEntity);
         }
     }
 
     /**
      * Filtering the collection on a given seller type
      *
-     * @param string $sellerType The seller Type
+     * @param string $sellerEntity The seller entity class
      *
      * @throws \Exception
      */
-    public function addSellerTypeFilter($sellerType)
+    public function addSellerTypeFilter($sellerEntity)
     {
-        if (null !== $sellerType) {
-            $sellerMetadata = $this->metadataPool->getMetadata(SellerInterface::class);
-            $sellerResource = $this->sellerFactory->create()->getResource();
-            $attributeSetId = $sellerResource->getAttributeSetIdByName($sellerType);
+        if (null !== $sellerEntity) {
+            $sellerMetadata = $this->metadataPool->getMetadata($sellerEntity);
+            $sellerInstance = $this->_entityFactory->create($sellerEntity);
+
+            $sellerResource = $sellerInstance->getResource();
+            $attributeSetId = $sellerResource->getAttributeSetIdByName($sellerInstance->getAttributeSetName());
+
             $sellerTable    = $sellerMetadata->getEntityTable();
             $sellerPkName   = $sellerMetadata->getIdentifierField();
 
@@ -133,7 +127,6 @@ class Collection extends AbstractCollection
 
     /**
      * Define resource model
-     *
      * @SuppressWarnings(PHPMD.CamelCaseMethodName) Method is inherited.
      *
      * @return void

@@ -36,7 +36,7 @@ class Collection extends AbstractCollection
     /**
      * @var MetadataPool $metadataPool
      */
-    private $metadataPool;
+    protected $metadataPool;
 
     /**
      * Collection constructor.

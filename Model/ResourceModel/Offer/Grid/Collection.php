@@ -143,9 +143,10 @@ class Collection extends \Smile\Offer\Model\ResourceModel\Offer\Collection
 
         $columns = (null === $alias) ? [$attributeCode => 'value'] : [$alias => 'value'];
 
-        $entity        = $this->eavEntityFactory->create()->setType($entityType);
+        $metadata      = $this->metadataPool->getMetadata($entityType);
+        $entity        = $this->eavEntityFactory->create()->setType($metadata->getEavEntityType());
         $attribute     = $entity->getAttribute($attributeCode);
-        $entityIdField = $entity->getEntityIdField();
+        $linkField     = $metadata->getLinkField();
         $foreignKey    = $this->getForeignKeyByEntityType($entityType);
         $idField       = OfferInterface::OFFER_ID;
 
@@ -158,7 +159,7 @@ class Collection extends \Smile\Offer\Model\ResourceModel\Offer\Collection
             // Join entity attribute value table.
             $this->getSelect()->joinLeft(
                 ["{$attributeTableAlias}_d" => $this->getTable($backendTable)],
-                new \Zend_Db_Expr("{$attributeTableAlias}_d.{$entityIdField} = main_table.{$foreignKey}"),
+                new \Zend_Db_Expr("{$attributeTableAlias}_d.{$linkField} = main_table.{$foreignKey}"),
                 $columns
             );
 
@@ -168,7 +169,7 @@ class Collection extends \Smile\Offer\Model\ResourceModel\Offer\Collection
             if ($storeId) {
                 $joinCondition = [
                     "{$attributeTableAlias}_s.attribute_id = {$attributeTableAlias}_d.attribute_id",
-                    "{$attributeTableAlias}_s.{$entityIdField} = {$attributeTableAlias}_d.{$entityIdField}",
+                    "{$attributeTableAlias}_s.{$linkField} = {$attributeTableAlias}_d.{$linkField}",
                     $this->getConnection()->quoteInto("{$attributeTableAlias}_s.store_id = ?", $storeId),
                 ];
 
@@ -198,13 +199,16 @@ class Collection extends \Smile\Offer\Model\ResourceModel\Offer\Collection
     /**
      * Retrieve proper field for binding on other entities.
      *
-     * @param string $entityType The entity type
+     * @param string $entity The entity
      *
      * @return string
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    private function getForeignKeyByEntityType($entityType)
+    private function getForeignKeyByEntityType($entity)
     {
+        $metadata   = $this->metadataPool->getMetadata($entity);
+        $entityType = $metadata->getEavEntityType();
+
         if ($entityType == \Smile\Seller\Api\Data\SellerInterface::ENTITY) {
             return \Smile\Offer\Api\Data\OfferInterface::SELLER_ID;
         }
@@ -219,13 +223,16 @@ class Collection extends \Smile\Offer\Model\ResourceModel\Offer\Collection
     /**
      * Get an alias for a given couple entity/attributeCode to ensure unicity on SQL query.
      *
-     * @param string $entityType    The entity type
+     * @param string $entity        The entity
      * @param string $attributeCode The attribute code
      *
      * @return string
      */
-    private function getEntityAttributeTableAlias($entityType, $attributeCode)
+    private function getEntityAttributeTableAlias($entity, $attributeCode)
     {
+        $metadata   = $this->metadataPool->getMetadata($entity);
+        $entityType = $metadata->getEavEntityType();
+
         $field = $attributeCode;
         if (isset($this->fieldAlias[$entityType][$attributeCode])) {
             $field = $this->fieldAlias[$entityType][$attributeCode];

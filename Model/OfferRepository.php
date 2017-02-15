@@ -42,11 +42,6 @@ class OfferRepository implements OfferRepositoryInterface
     private $resource;
 
     /**
-     * @var \Smile\Offer\Api\Data\OfferInterfaceFactory
-     */
-    private $offerFactory;
-
-    /**
      * @var \Smile\Offer\Model\ResourceModel\Offer\CollectionFactory
      */
     private $offerCollectionFactory;
@@ -61,18 +56,15 @@ class OfferRepository implements OfferRepositoryInterface
      * OfferRepository constructor.
      *
      * @param \Smile\Offer\Model\ResourceModel\Offer                   $resource               Offer Resource Model
-     * @param \Smile\Offer\Api\Data\OfferInterfaceFactory              $offerFactory           Offer Factory
      * @param \Smile\Offer\Model\ResourceModel\Offer\CollectionFactory $offerCollectionFactory Offer Collection Factory
      * @param \Smile\Offer\Api\Data\OfferSearchResultsInterfaceFactory $searchResultsFactory   Search Results Factory
      */
     public function __construct(
         OfferResource $resource,
-        OfferFactory $offerFactory,
         OfferCollectionFactory $offerCollectionFactory,
         OfferSearchResultsInterfaceFactory $searchResultsFactory
     ) {
         $this->resource               = $resource;
-        $this->offerFactory           = $offerFactory;
         $this->offerCollectionFactory = $offerCollectionFactory;
         $this->searchResultsFactory   = $searchResultsFactory;
     }
@@ -96,7 +88,7 @@ class OfferRepository implements OfferRepositoryInterface
      */
     public function getById($offerId)
     {
-        $offer = $this->offerFactory->create();
+        $offer = $this->offerCollectionFactory->create()->getNewEmptyItem();
 
         $this->resource->load($offer, $offerId);
         if (!$offer->getId()) {

@@ -4,7 +4,7 @@
     "description": "Smile Retailer Suite - Offer Module",
     "keywords": ["magento2","retailer suite","retailer","offer"],
     "require": {
-        "php": "~5.5.0|~5.6.0|~7.0.0",
+        "php": "~5.5.0|~5.6.0|~7.0.0|~7.1.0",
         "magento/framework": "*",
         "magento/module-catalog": "*",
         "magento/magento-composer-installer": "*",

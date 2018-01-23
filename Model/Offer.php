@@ -15,9 +15,7 @@
 namespace Smile\Offer\Model;
 
 use Smile\Offer\Api\Data\OfferInterface;
-use Magento\Framework\Model\AbstractModel;
 use Magento\Framework\DataObject\IdentityInterface;
-use Symfony\Component\Config\Definition\Exception\Exception;
 
 /**
  * Offer Model
@@ -28,7 +26,7 @@ use Symfony\Component\Config\Definition\Exception\Exception;
  * @package  Smile\Offer
  * @author   Aurelien Foucret <aurelien.foucret@smile.fr>
  */
-class Offer extends AbstractModel implements OfferInterface, IdentityInterface
+class Offer extends \Magento\Framework\Model\AbstractExtensibleModel implements OfferInterface, IdentityInterface
 {
     /**
      * @var string
@@ -192,6 +190,29 @@ class Offer extends AbstractModel implements OfferInterface, IdentityInterface
         }
 
         return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getExtensionAttributes()
+    {
+        $extensionAttributes = $this->_getExtensionAttributes();
+        if (!$extensionAttributes) {
+            $extensionAttributes = $this->extensionAttributesFactory
+                ->create('Smile\Offer\Api\Data\OfferInterface');
+            $this->_setExtensionAttributes($extensionAttributes);
+        }
+
+        return $extensionAttributes;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setExtensionAttributes(\Smile\Offer\Api\Data\OfferExtensionInterface $extensionAttributes)
+    {
+        return $this->_setExtensionAttributes($extensionAttributes);
     }
 
     /**

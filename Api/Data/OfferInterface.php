@@ -19,7 +19,7 @@ namespace Smile\Offer\Api\Data;
  *
  * @api
  */
-interface OfferInterface extends \Magento\Framework\Api\ExtensibleDataInterface
+interface OfferInterface extends \Magento\Framework\Api\CustomAttributesDataInterface
 {
     /**
      * The offer Id field
@@ -146,4 +146,20 @@ interface OfferInterface extends \Magento\Framework\Api\ExtensibleDataInterface
      * @return \Smile\Offer\Api\Data\OfferInterface
      */
     public function setSpecialPrice($price);
+
+    /**
+     * Retrieve existing extension attributes object or create a new one.
+     *
+     * @return \Smile\Offer\Api\Data\OfferExtensionInterface|null
+     */
+    public function getExtensionAttributes();
+
+    /**
+     * Set an extension attributes object.
+     *
+     * @param \Smile\Offer\Api\Data\OfferExtensionInterface $extensionAttributes The additional attributes
+     *
+     * @return $this
+     */
+    public function setExtensionAttributes(\Smile\Offer\Api\Data\OfferExtensionInterface $extensionAttributes);
 }

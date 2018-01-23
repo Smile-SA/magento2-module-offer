@@ -55,6 +55,12 @@ class OfferData implements DatasourceInterface
         foreach ($offerData as $productId => $offerDataRow) {
             $productId = (int) $offerDataRow['product_id'];
             $offerDataRow = $this->processOfferPrices($offerDataRow, $indexData[$productId]);
+
+            $offerDataRow['offer_id']     = (int) $offerDataRow['offer_id'];
+            $offerDataRow['product_id']   = (int) $offerDataRow['product_id'];
+            $offerDataRow['seller_id']    = (int) $offerDataRow['seller_id'];
+            $offerDataRow['is_available'] = (bool) ($offerDataRow['is_available'] ?? false);
+
             $indexData[$productId]['offer'][] = $offerDataRow;
         }
 

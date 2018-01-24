@@ -157,7 +157,17 @@ class Offer extends \Magento\Framework\Model\AbstractExtensibleModel implements 
      */
     public function getIdentities()
     {
-        return [self::CACHE_TAG . '_' . $this->getId()];
+        $identities = [self::CACHE_TAG . '_' . $this->getId()];
+
+        if (!$this->getId() || $this->hasDataChanges() || $this->isDeleted()) {
+            $identities[] = \Magento\Catalog\Model\Product::CACHE_TAG . '_' . $this->getProductId();
+        }
+
+        if ($this->_appState->getAreaCode() == \Magento\Framework\App\Area::AREA_FRONTEND) {
+            $identities[] = self::CACHE_TAG;
+        }
+
+        return $identities;
     }
 
     /**

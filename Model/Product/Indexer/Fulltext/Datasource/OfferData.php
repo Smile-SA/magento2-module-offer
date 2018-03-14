@@ -70,8 +70,6 @@ class OfferData implements DatasourceInterface
     /**
      * Process offer prices
      *
-     * @SuppressWarnings(PHPMD.ElseExpression)
-     *
      * @param array $offerData   Offer Data
      * @param array $productData Product Data
      *
@@ -84,17 +82,16 @@ class OfferData implements DatasourceInterface
             foreach ($productData['price'] as $currentPriceData) {
                 if ($currentPriceData['customer_group_id'] == CustomerGroupInterface::NOT_LOGGED_IN_ID) {
                     $defaultPriceData = $currentPriceData;
+                    break;
                 }
             }
 
             $offerData = array_filter($offerData);
             $offerData['original_price'] = isset($offerData['price']) ? $offerData['price'] : $defaultPriceData['original_price'];
-
+            $offerData['price'] = $offerData['original_price'];
             if (isset($offerData['special_price'])) {
                 $offerData['price'] = min($offerData['price'], $offerData['special_price']);
                 unset($offerData['special_price']);
-            } else {
-                $offerData['price'] = $defaultPriceData['price'];
             }
 
             $offerData['is_discount'] = $offerData['price'] < $offerData['original_price'];

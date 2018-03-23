@@ -159,7 +159,13 @@ class Collection extends \Smile\Offer\Model\ResourceModel\Offer\Collection
             // Join entity attribute value table.
             $this->getSelect()->joinLeft(
                 ["{$attributeTableAlias}_d" => $this->getTable($backendTable)],
-                new \Zend_Db_Expr("{$attributeTableAlias}_d.{$linkField} = main_table.{$foreignKey}"),
+                implode(
+                    ' AND ',
+                    [
+                        new \Zend_Db_Expr("{$attributeTableAlias}_d.{$linkField} = main_table.{$foreignKey}"),
+                        new \Zend_Db_Expr("{$attributeTableAlias}_d.attribute_id = ".$attribute->getId()),
+                    ]
+                ),
                 $columns
             );
 
@@ -174,7 +180,10 @@ class Collection extends \Smile\Offer\Model\ResourceModel\Offer\Collection
                 ];
 
                 $this->getSelect()->joinLeft(["{$attributeTableAlias}_s" => $backendTable], implode(' AND ', $joinCondition), []);
-                $storeCondition = $this->getConnection()->getIfNullSql("{$attributeTableAlias}_s.store_id", \Magento\Store\Model\Store::DEFAULT_STORE_ID);
+                $storeCondition = $this->getConnection()->getIfNullSql(
+                    "{$attributeTableAlias}_s.store_id",
+                    \Magento\Store\Model\Store::DEFAULT_STORE_ID
+                );
             }
 
             $this->getSelect()->where("{$attributeTableAlias}_d.store_id = ?", $storeCondition);

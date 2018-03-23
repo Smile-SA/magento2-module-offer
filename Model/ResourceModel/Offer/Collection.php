@@ -87,12 +87,13 @@ class Collection extends AbstractCollection
             $sellerPkName   = $sellerMetadata->getIdentifierField();
 
             if (null !== $attributeSetId) {
-                $this->getSelect()->joinInner(
+                $this->getSelect()->joinLeft(
                     $this->getTable($sellerTable),
-                    new \Zend_Db_Expr("{$sellerTable}.{$sellerPkName} = main_table." . OfferInterface::SELLER_ID)
+                    implode(' AND ', [
+                        new \Zend_Db_Expr("{$sellerTable}.{$sellerPkName} = main_table." . OfferInterface::SELLER_ID),
+                        new \Zend_Db_Expr("{$sellerTable}.attribute_set_id = ". (int) $attributeSetId),
+                    ])
                 );
-
-                $this->getSelect()->where("{$sellerTable}.attribute_set_id = ?", (int) $attributeSetId);
             }
         }
     }

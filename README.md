@@ -1,4 +1,4 @@
-## ElasticSuite Seller Search
+## Smile Offer
 
 This module is a plugin for [ElasticSuite](https://github.com/Smile-SA/elasticsuite).
 

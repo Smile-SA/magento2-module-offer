@@ -34,6 +34,23 @@ class UpgradeSchema implements UpgradeSchemaInterface
     {
         $setup->startSetup();
 
+        if (version_compare($context->getVersion(), '1.0.2', '<')) {
+            $this->addColumns($setup);
+        }
+        if (version_compare($context->getVersion(), '1.0.3', '<')) {
+            $this->addForeignKey($setup);
+        }
+
+        $setup->endSetup();
+    }
+
+    /**
+     * Add 'seller_id' and 'pickup_date' columns on quote and order tables.
+     *
+     * @param SchemaSetupInterface $setup Module Setup.
+     */
+    protected function addColumns(SchemaSetupInterface $setup)
+    {
         $tables = [$setup->getTable('quote'), $setup->getTable('sales_order')];
 
         foreach ($tables as $currentTable) {
@@ -60,7 +77,26 @@ class UpgradeSchema implements UpgradeSchemaInterface
                 ]
             );
         }
+    }
 
-        $setup->endSetup();
+    /**
+     * Add foreign key on quote and order tables for column 'seller_id'.
+     *
+     * @param SchemaSetupInterface $setup Module Setup.
+     */
+    protected function addForeignKey(SchemaSetupInterface $setup)
+    {
+        $tables = [$setup->getTable('quote'), $setup->getTable('sales_order')];
+
+        foreach ($tables as $currentTable) {
+            $setup->getConnection()->addForeignKey(
+                $setup->getFkName($currentTable, 'seller_id', 'smile_seller_entity', 'entity_id'),
+                $currentTable,
+                'seller_id',
+                $setup->getTable('smile_seller_entity'),
+                'entity_id',
+                \Magento\Framework\DB\Ddl\Table::ACTION_SET_NULL
+            );
+        }
     }
 }

@@ -103,11 +103,14 @@ class Collection extends \Smile\Offer\Model\ResourceModel\Offer\Collection
 
         $this->fieldAlias[\Magento\Catalog\Model\Product::ENTITY][$skuField] = (null === $alias) ? $skuField : $alias;
 
-        $this->getSelect()->joinLeft(
-            ["cpe" => $this->getTable("catalog_product_entity")],
-            new \Zend_Db_Expr("cpe.entity_id = main_table.product_id"),
-            $columns
-        );
+        $fromPart = $this->getSelect()->getPart('from');
+        if(!isset($fromPart['catalog_product_entity'])) {
+            $this->getSelect()->joinLeft(
+                ["cpe" => $this->getTable("catalog_product_entity")],
+                new \Zend_Db_Expr("cpe.entity_id = main_table.product_id"),
+                $columns
+            );
+        }
 
         return $this;
     }
@@ -131,12 +134,18 @@ class Collection extends \Smile\Offer\Model\ResourceModel\Offer\Collection
      * @param string $attributeCode The Attribute code
      * @param string $alias         The field alias, if any
      * @param int    $storeId       The current store scope for seller attributes retrieval
+     * @param array  $join          Join table for Magento EE
      *
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      * @return $this
      */
-    public function addEntityAttributeToSelect($entityType, $attributeCode, $alias = null, $storeId = null)
-    {
+    public function addEntityAttributeToSelect(
+        $entityType,
+        $attributeCode,
+        $alias = null,
+        $storeId = null,
+        $join = null
+    ) {
         if (isset($this->fieldAlias[$entityType][$attributeCode])) {
             return $this;
         }
@@ -156,13 +165,23 @@ class Collection extends \Smile\Offer\Model\ResourceModel\Offer\Collection
             $backendTable = $attribute->getBackendTable();
             $attributeTableAlias = $this->getEntityAttributeTableAlias($entityType, $attributeCode);
 
+            $foreignKeyCondition = "main_table.{$foreignKey}";
+            if (!is_null($join)) {
+                $this->getSelect()->joinLeft(
+                    $join['name'],
+                    $join['cond'],
+                    $join['cols']
+                );
+                $foreignKeyCondition = $join['foreignKeyCondition'];
+            }
+
             // Join entity attribute value table.
             $this->getSelect()->joinLeft(
                 ["{$attributeTableAlias}_d" => $this->getTable($backendTable)],
                 implode(
                     ' AND ',
                     [
-                        new \Zend_Db_Expr("{$attributeTableAlias}_d.{$linkField} = main_table.{$foreignKey}"),
+                        new \Zend_Db_Expr("{$attributeTableAlias}_d.{$linkField} = {$foreignKeyCondition}"),
                         new \Zend_Db_Expr("{$attributeTableAlias}_d.attribute_id = ".$attribute->getId()),
                     ]
                 ),

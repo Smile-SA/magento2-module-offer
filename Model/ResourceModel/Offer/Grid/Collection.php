@@ -232,7 +232,7 @@ class Collection extends \Smile\Offer\Model\ResourceModel\Offer\Collection
      * @return string
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    private function getForeignKeyByEntityType($entity)
+    public function getForeignKeyByEntityType($entity)
     {
         $metadata   = $this->metadataPool->getMetadata($entity);
         $entityType = $metadata->getEavEntityType();

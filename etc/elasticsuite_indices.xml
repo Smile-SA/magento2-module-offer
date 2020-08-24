@@ -21,10 +21,6 @@
 
     <index identifier="catalog_product" defaultSearchType="product">
         <type name="product" idFieldName="entity_id">
-            <datasources>
-                <datasource name="offers">Smile\Offer\Model\Product\Indexer\Fulltext\Datasource\OfferData</datasource>
-            </datasources>
-            
             <mapping>
                 <!-- Static fields handled by the "offers" datasource -->
                 <field name="offer.offer_id" type="integer" nestedPath="offer" />

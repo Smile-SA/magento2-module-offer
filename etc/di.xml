@@ -22,7 +22,7 @@
     <preference for="Smile\Offer\Api\Data\OfferSearchResultsInterface" type="Magento\Framework\Api\SearchResults" />
 
     <preference for="Smile\Offer\Api\OfferRepositoryInterface" type="Smile\Offer\Model\OfferRepository" />
-    
+
     <preference for="Smile\Offer\Api\OfferManagementInterface" type="Smile\Offer\Model\OfferManagement" />
 
     <preference for="Smile\Offer\Model\Locator\LocatorInterface" type="Smile\Offer\Model\Locator\RegistryLocator"/>
@@ -42,6 +42,18 @@
         <arguments>
             <argument name="hydrators" xsi:type="array">
                 <item name="Smile\Offer\Api\Data\OfferInterface" xsi:type="string">Magento\Framework\EntityManager\AbstractModelHydrator</item>
+            </argument>
+        </arguments>
+    </type>
+    <!-- Datasources resolver -->
+    <type name="Smile\ElasticsuiteCore\Index\Type\DataSourceResolver">
+        <arguments>
+            <argument name="datasources" xsi:type="array">
+                <item name="catalog_product" xsi:type="array">
+                    <item name="product" xsi:type="array">
+                        <item name="offers" xsi:type="object">Smile\Offer\Model\Product\Indexer\Fulltext\Datasource\OfferData</item>
+                    </item>
+                </item>
             </argument>
         </arguments>
     </type>

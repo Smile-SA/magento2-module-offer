@@ -46,13 +46,11 @@
         </arguments>
     </type>
     <!-- Datasources resolver -->
-    <type name="Smile\ElasticsuiteCore\Index\Type\DataSourceResolver">
+    <type name="Smile\ElasticsuiteCore\Index\DataSourceResolver">
         <arguments>
             <argument name="datasources" xsi:type="array">
                 <item name="catalog_product" xsi:type="array">
-                    <item name="product" xsi:type="array">
-                        <item name="offers" xsi:type="object">Smile\Offer\Model\Product\Indexer\Fulltext\Datasource\OfferData</item>
-                    </item>
+                    <item name="offers" xsi:type="object">Smile\Offer\Model\Product\Indexer\Fulltext\Datasource\OfferData</item>
                 </item>
             </argument>
         </arguments>

@@ -14,10 +14,12 @@
 
 namespace Smile\Offer\Model\Product\Indexer\Fulltext\Datasource;
 
+use Magento\Catalog\Model\Product as ProductModel;
+use Magento\Framework\App\ObjectManager;
 use Smile\ElasticsuiteCore\Api\Index\DatasourceInterface;
 use Smile\Offer\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\OfferData as ResourceModel;
-use Magento\Catalog\Model\Product\TypeFactory as ProductTypeFactory;
 use Magento\Customer\Api\Data\GroupInterface as CustomerGroupInterface;
+use Magento\Framework\Indexer\CacheContext;
 
 /**
  * Datasource used to append prices data to product during indexing.
@@ -29,18 +31,27 @@ use Magento\Customer\Api\Data\GroupInterface as CustomerGroupInterface;
 class OfferData implements DatasourceInterface
 {
     /**
-     * @var \Smile\Offer\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\OfferData
+     * @var ResourceModel
      */
     private $resourceModel;
 
     /**
+     * @var CacheContext
+     */
+    private $cacheContext;
+
+    /**
      * Constructor.
      *
-     * @param ResourceModel $resourceModel Resource model
+     * @param ResourceModel     $resourceModel Resource model
+     * @param CacheContext|null $cacheContext  Indexer cache context
      */
-    public function __construct(ResourceModel $resourceModel)
-    {
+    public function __construct(
+        ResourceModel $resourceModel,
+        CacheContext $cacheContext = null
+    ) {
         $this->resourceModel = $resourceModel;
+        $this->cacheContext = $cacheContext ?: ObjectManager::getInstance()->get(CacheContext::class);
     }
 
     /**
@@ -50,9 +61,10 @@ class OfferData implements DatasourceInterface
      */
     public function addData($storeId, array $indexData)
     {
+        $entitiesIds = [];
         $offerData = $this->resourceModel->loadOfferData(array_keys($indexData));
 
-        foreach ($offerData as $productId => $offerDataRow) {
+        foreach ($offerData as $offerDataRow) {
             $productId = (int) $offerDataRow['product_id'];
             $offerDataRow = $this->processOfferPrices($offerDataRow, $indexData[$productId]);
 
@@ -61,7 +73,12 @@ class OfferData implements DatasourceInterface
             $offerDataRow['seller_id']    = (int) $offerDataRow['seller_id'];
             $offerDataRow['is_available'] = (bool) ($offerDataRow['is_available'] ?? false);
 
+            $entitiesIds[] = $productId;
             $indexData[$productId]['offer'][] = $offerDataRow;
+        }
+
+        if ($entitiesIds) {
+            $this->cacheContext->registerEntities(ProductModel::CACHE_TAG, $entitiesIds);
         }
 
         return $indexData;

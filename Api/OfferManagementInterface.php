@@ -29,7 +29,7 @@ interface OfferManagementInterface
      *
      * @return boolean
      */
-    public function createOffer($sellerId, $productId, $params);
+    public function createOffer(int $sellerId, int $productId, array $params): bool;
 
     /**
      * Get Offers for a given product Id, and a given date.
@@ -38,7 +38,7 @@ interface OfferManagementInterface
      *
      * @return OfferInterface[]
      */
-    public function getProductOffers($productId);
+    public function getProductOffers(int $productId): array;
 
     /**
      * Get Offers for a given seller Id, and a given date.
@@ -47,7 +47,7 @@ interface OfferManagementInterface
      *
      * @return OfferInterface[]
      */
-    public function getSellerOffers($sellerId);
+    public function getSellerOffers(int $sellerId): array;
 
     /**
      * Get Offer by product, seller and date.
@@ -57,5 +57,5 @@ interface OfferManagementInterface
      *
      * @return OfferInterface
      */
-    public function getOffer($productId, $sellerId);
+    public function getOffer(int $productId, int $sellerId): OfferInterface;
 }

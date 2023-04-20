@@ -30,7 +30,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function upgrade(SchemaSetupInterface $setup, ModuleContextInterface $context)
+    public function upgrade(SchemaSetupInterface $setup, ModuleContextInterface $context): void
     {
         $setup->startSetup();
 
@@ -49,7 +49,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
      *
      * @param SchemaSetupInterface $setup Module Setup.
      */
-    protected function addColumns(SchemaSetupInterface $setup)
+    protected function addColumns(SchemaSetupInterface $setup): void
     {
         $tables = [$setup->getTable('quote'), $setup->getTable('sales_order')];
 
@@ -84,7 +84,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
      *
      * @param SchemaSetupInterface $setup Module Setup.
      */
-    protected function addForeignKey(SchemaSetupInterface $setup)
+    protected function addForeignKey(SchemaSetupInterface $setup): void
     {
         $tables = [$setup->getTable('quote'), $setup->getTable('sales_order')];
 

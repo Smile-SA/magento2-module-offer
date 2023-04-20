@@ -12,8 +12,11 @@
  */
 namespace Smile\Offer\Observer;
 
+use Magento\CatalogSearch\Model\Indexer\Fulltext;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
+use Magento\Framework\Indexer\IndexerInterface;
+use Magento\Framework\Indexer\IndexerRegistry;
 use Smile\Offer\Model\Offer;
 
 /**
@@ -26,24 +29,25 @@ use Smile\Offer\Model\Offer;
 class ReindexOffer implements ObserverInterface
 {
     /**
-     * @var \Magento\Framework\Indexer\IndexerRegistry
+     * @var IndexerRegistry
      */
-    private $indexerRegistry;
+    private IndexerRegistry $indexerRegistry;
 
     /**
-     * @var \Magento\Framework\Indexer\IndexerInterface
+     * @var IndexerInterface
      */
-    private $indexer;
+    private IndexerInterface $indexer;
 
     /**
      * ReindexOffer constructor.
      *
-     * @param \Magento\Framework\Indexer\IndexerRegistry $indexerRegistry Indexer Registry
+     * @param IndexerRegistry $indexerRegistry Indexer Registry
      */
-    public function __construct(\Magento\Framework\Indexer\IndexerRegistry $indexerRegistry)
-    {
+    public function __construct(
+        IndexerRegistry $indexerRegistry
+    ) {
         $this->indexerRegistry = $indexerRegistry;
-        $this->indexer = $this->indexerRegistry->get(\Magento\CatalogSearch\Model\Indexer\Fulltext::INDEXER_ID);
+        $this->indexer = $this->indexerRegistry->get(Fulltext::INDEXER_ID);
     }
 
     /**
@@ -54,7 +58,7 @@ class ReindexOffer implements ObserverInterface
      *
      * @return void
      */
-    public function execute(\Magento\Framework\Event\Observer $observer)
+    public function execute(Observer $observer): void
     {
         /** @var Offer $offer */
         $offer = $observer->getEvent()->getEntity();

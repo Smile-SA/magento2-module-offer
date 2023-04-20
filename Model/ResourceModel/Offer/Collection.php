@@ -36,7 +36,12 @@ class Collection extends AbstractCollection
     /**
      * @var MetadataPool $metadataPool
      */
-    protected $metadataPool;
+    protected MetadataPool $metadataPool;
+
+    /**
+     * @var ?string $sellerEntity
+     */
+    protected ?string $sellerEntity = null;
 
     /**
      * Collection constructor.
@@ -46,9 +51,9 @@ class Collection extends AbstractCollection
      * @param FetchStrategyInterface $fetchStrategy Fetch Strategy
      * @param ManagerInterface       $eventManager  Event Manager
      * @param MetadataPool           $metadataPool  Metadata Pool
-     * @param AdapterInterface|null  $connection    Database Connection
-     * @param AbstractDb|null        $resource      Resource Model
-     * @param string|null            $sellerEntity  The seller type to filter on. If Any.
+     * @param ?AdapterInterface      $connection    Database Connection
+     * @param ?AbstractDb            $resource      Resource Model
+     * @param ?string                $sellerEntity  The seller type to filter on. If Any.
      */
     public function __construct(
         EntityFactoryInterface $entityFactory,
@@ -58,13 +63,11 @@ class Collection extends AbstractCollection
         MetadataPool $metadataPool,
         AdapterInterface $connection = null,
         AbstractDb $resource = null,
-        $sellerEntity = null
+        ?string $sellerEntity = null
     ) {
         parent::__construct($entityFactory, $logger, $fetchStrategy, $eventManager, $connection, $resource);
         $this->metadataPool  = $metadataPool;
-        if ($sellerEntity !== null) {
-            $this->addSellerTypeFilter($sellerEntity);
-        }
+        $this->sellerEntity = $sellerEntity;
     }
 
     /**
@@ -74,7 +77,7 @@ class Collection extends AbstractCollection
      *
      * @throws \Exception
      */
-    public function addSellerTypeFilter($sellerEntity)
+    public function addSellerTypeFilter(string $sellerEntity): void
     {
         if (null !== $sellerEntity) {
             $sellerMetadata = $this->metadataPool->getMetadata($sellerEntity);
@@ -105,7 +108,7 @@ class Collection extends AbstractCollection
      *
      * @return $this
      */
-    public function addProductFilter($productId)
+    public function addProductFilter(int $productId): self
     {
         $this->addFieldToFilter(OfferInterface::PRODUCT_ID, $productId);
 
@@ -119,7 +122,7 @@ class Collection extends AbstractCollection
      *
      * @return $this
      */
-    public function addSellerFilter($sellerId)
+    public function addSellerFilter(int $sellerId): self
     {
         $this->addFieldToFilter(OfferInterface::SELLER_ID, $sellerId);
 
@@ -132,8 +135,11 @@ class Collection extends AbstractCollection
      *
      * @return void
      */
-    protected function _construct()
+    protected function _construct(): void
     {
         $this->_init('Smile\Offer\Model\Offer', 'Smile\Offer\Model\ResourceModel\Offer');
+        if ($this->sellerEntity !== null) {
+            $this->addSellerTypeFilter($this->sellerEntity);
+        }
     }
 }

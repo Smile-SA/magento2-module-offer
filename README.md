@@ -8,8 +8,9 @@ It allows to add offers on products by sellers.
 
 The module requires :
 
-- [ElasticSuite](https://github.com/Smile-SA/elasticsuite) > 2.1.*
-- [Seller](https://github.com/Smile-SA/magento2-module-seller) > 1.2.*
+- PHP ^8.1
+- [ElasticSuite](https://github.com/Smile-SA/elasticsuite) > 2.11.*
+- [Seller](https://github.com/Smile-SA/magento2-module-seller) > 2.0.*
 
 ### How to use
 

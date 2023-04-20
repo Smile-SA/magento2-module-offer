@@ -14,6 +14,7 @@
 
 namespace Smile\Offer\Model\ResourceModel;
 
+use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Select;
 use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Framework\EntityManager\EntityManager;
@@ -34,20 +35,20 @@ class Offer extends AbstractDb
     /**
      * @var EntityManager
      */
-    protected $entityManager;
+    protected EntityManager $entityManager;
 
     /**
      * @var MetadataPool
      */
-    protected $metadataPool;
+    protected MetadataPool $metadataPool;
 
     /**
      * Offer constructor.
      *
-     * @param \Magento\Framework\Model\ResourceModel\Db\Context $context        Application Context
-     * @param \Magento\Framework\EntityManager\EntityManager    $entityManager  Entity Manager
-     * @param \Magento\Framework\EntityManager\MetadataPool     $metadataPool   Metadata Pool
-     * @param null                                              $connectionName Connection name
+     * @param Context          $context        Application Context
+     * @param EntityManager    $entityManager  Entity Manager
+     * @param MetadataPool     $metadataPool   Metadata Pool
+     * @param null             $connectionName Connection name
      */
     public function __construct(
         Context $context,
@@ -63,13 +64,13 @@ class Offer extends AbstractDb
     /**
      * Load an Offer by a given field's value.
      *
-     * @param \Magento\Framework\Model\AbstractModel $object The offer
-     * @param mixed                                  $value  The value
-     * @param null                                   $field  The field, if any
+     * @param AbstractModel $object The offer
+     * @param mixed         $value  The value
+     * @param null          $field  The field, if any
      *
      * @return $this
      */
-    public function load(AbstractModel $object, $value, $field = null)
+    public function load(AbstractModel $object, $value, $field = null): self
     {
         $offerId = $this->getOfferId($object, $value, $field);
         if ($offerId) {
@@ -82,7 +83,7 @@ class Offer extends AbstractDb
     /**
      * {@inheritDoc}
      */
-    public function save(AbstractModel $object)
+    public function save(AbstractModel $object): self
     {
         $this->_beforeSave($object);
         $this->entityManager->save($object);
@@ -93,7 +94,7 @@ class Offer extends AbstractDb
     /**
      * {@inheritDoc}
      */
-    public function delete(AbstractModel $object)
+    public function delete(AbstractModel $object): self
     {
         $this->entityManager->delete($object);
 
@@ -103,7 +104,7 @@ class Offer extends AbstractDb
     /**
      * {@inheritDoc}
      */
-    public function getConnection()
+    public function getConnection(): false|AdapterInterface
     {
         return $this->metadataPool->getMetadata(OfferInterface::class)->getEntityConnection();
     }
@@ -113,7 +114,7 @@ class Offer extends AbstractDb
      *
      * @SuppressWarnings(PHPMD.CamelCaseMethodName) Method is inherited.
      */
-    protected function _construct()
+    protected function _construct(): void
     {
         $metadata = $this->metadataPool->getMetadata(OfferInterface::class);
         $this->_init($metadata->getEntityTable(), $metadata->getIdentifierField());
@@ -122,15 +123,15 @@ class Offer extends AbstractDb
     /**
      * Retrieve Offer Id by field value
      *
-     * @param \Magento\Framework\Model\AbstractModel $object The Offer
-     * @param mixed                                  $value  The value
-     * @param null                                   $field  The field
+     * @param AbstractModel $object The Offer
+     * @param mixed         $value  The value
+     * @param null          $field  The field
      *
      * @return int|false
      * @throws \Exception
      * @throws \Magento\Framework\Exception\LocalizedException
      */
-    private function getOfferId(AbstractModel $object, $value, $field = null)
+    private function getOfferId(AbstractModel $object, $value, $field = null): int|false
     {
         $entityMetadata = $this->metadataPool->getMetadata(OfferInterface::class);
 

@@ -15,8 +15,10 @@
 namespace Smile\Offer\Model;
 
 use Smile\Offer\Api\OfferManagementInterface;
+use Smile\Offer\Api\Data\OfferInterface;
 use Smile\Offer\Api\Data\OfferInterfaceFactory as OfferFactory;
 use Smile\Offer\Api\OfferRepositoryInterface;
+use Smile\Offer\Model\ResourceModel\Offer\Collection as OfferCollection;
 use Smile\Offer\Model\ResourceModel\Offer\CollectionFactory as OfferCollectionFactory;
 
 /**
@@ -29,19 +31,19 @@ use Smile\Offer\Model\ResourceModel\Offer\CollectionFactory as OfferCollectionFa
 class OfferManagement implements OfferManagementInterface
 {
     /**
-     * @var \Smile\Offer\Api\Data\OfferInterfaceFactory
+     * @var OfferFactory
      */
-    private $offerFactory;
+    private OfferFactory $offerFactory;
 
     /**
-     * @var \Smile\Offer\Api\OfferRepositoryInterface
+     * @var OfferRepositoryInterface
      */
-    private $offerRepository;
+    private OfferRepositoryInterface $offerRepository;
 
     /**
-     * @var \Smile\Offer\Model\ResourceModel\Offer\CollectionFactory
+     * @var OfferCollectionFactory
      */
-    private $offerCollectionFactory;
+    private OfferCollectionFactory $offerCollectionFactory;
 
     /**
      * OfferManagement constructor.
@@ -63,7 +65,7 @@ class OfferManagement implements OfferManagementInterface
    /**
     * {@inheritDoc}
     */
-    public function createOffer($sellerId, $productId, $params)
+    public function createOffer(int $sellerId, int $productId, array $params): bool
     {
         $offer = $this->offerFactory->create();
         $offer->setSellerId($sellerId);
@@ -76,7 +78,7 @@ class OfferManagement implements OfferManagementInterface
     /**
      * {@inheritDoc}
      */
-    public function getProductOffers($productId)
+    public function getProductOffers(int $productId): array
     {
         $offerCollection = $this->offerCollectionFactory->create();
         $offerCollection->addProductFilter($productId);
@@ -87,7 +89,7 @@ class OfferManagement implements OfferManagementInterface
     /**
      * {@inheritDoc}
      */
-    public function getSellerOffers($sellerId)
+    public function getSellerOffers(int $sellerId): array
     {
         $offerCollection = $this->offerCollectionFactory->create();
         $offerCollection->addSellerFilter($sellerId);
@@ -98,10 +100,10 @@ class OfferManagement implements OfferManagementInterface
     /**
      * {@inheritDoc}
      */
-    public function getOffer($productId, $sellerId)
+    public function getOffer(int $productId, int $sellerId): OfferInterface
     {
         /**
-         * @var \Smile\Offer\Model\ResourceModel\Offer\Collection $offerCollection
+         * @var OfferCollection $offerCollection
          */
         $offerCollection = $this->offerCollectionFactory->create();
 

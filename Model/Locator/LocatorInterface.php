@@ -26,5 +26,5 @@ interface LocatorInterface
     /**
      * @return OfferInterface
      */
-    public function getOffer();
+    public function getOffer(): OfferInterface;
 }

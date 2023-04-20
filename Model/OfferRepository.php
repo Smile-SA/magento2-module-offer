@@ -16,12 +16,13 @@ namespace Smile\Offer\Model;
 
 use Magento\Framework\Api\SearchCriteriaInterface;
 use Smile\Offer\Api\Data\OfferInterface;
+use Smile\Offer\Api\Data\OfferInterfaceFactory as OfferFactory;
+use Smile\Offer\Api\Data\OfferSearchResultsInterface;
+use Smile\Offer\Api\Data\OfferSearchResultsInterfaceFactory;
 use Smile\Offer\Api\OfferRepositoryInterface;
 use Smile\Offer\Model\ResourceModel\Offer as OfferResource;
-use Smile\Offer\Api\Data\OfferInterfaceFactory as OfferFactory;
 use Smile\Offer\Model\ResourceModel\Offer\Collection;
 use Smile\Offer\Model\ResourceModel\Offer\CollectionFactory as OfferCollectionFactory;
-use Smile\Offer\Api\Data\OfferSearchResultsInterfaceFactory;
 use Magento\Framework\Exception\CouldNotSaveException;
 use Magento\Framework\Exception\CouldNotDeleteException;
 use Magento\Framework\Exception\NoSuchEntityException;
@@ -37,27 +38,27 @@ use Magento\Framework\Api\SortOrder;
 class OfferRepository implements OfferRepositoryInterface
 {
     /**
-     * @var \Smile\Offer\Model\ResourceModel\Offer
+     * @var OfferResource
      */
-    private $resource;
+    private OfferResource $resource;
 
     /**
-     * @var \Smile\Offer\Model\ResourceModel\Offer\CollectionFactory
+     * @var OfferCollectionFactory
      */
-    private $offerCollectionFactory;
+    private OfferCollectionFactory $offerCollectionFactory;
 
     /**
-     * @var \Smile\Offer\Api\Data\OfferSearchResultsInterface
+     * @var OfferSearchResultsInterfaceFactory
      */
-    private $searchResultsFactory;
+    private OfferSearchResultsInterfaceFactory $searchResultsFactory;
 
 
     /**
      * OfferRepository constructor.
      *
-     * @param \Smile\Offer\Model\ResourceModel\Offer                   $resource               Offer Resource Model
-     * @param \Smile\Offer\Model\ResourceModel\Offer\CollectionFactory $offerCollectionFactory Offer Collection Factory
-     * @param \Smile\Offer\Api\Data\OfferSearchResultsInterfaceFactory $searchResultsFactory   Search Results Factory
+     * @param OfferResource                      $resource               Offer Resource Model
+     * @param OfferCollectionFactory             $offerCollectionFactory Offer Collection Factory
+     * @param OfferSearchResultsInterfaceFactory $searchResultsFactory   Search Results Factory
      */
     public function __construct(
         OfferResource $resource,
@@ -72,7 +73,7 @@ class OfferRepository implements OfferRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function save(OfferInterface $offer)
+    public function save(OfferInterface $offer): OfferInterface
     {
         try {
             $this->resource->save($offer);
@@ -86,7 +87,7 @@ class OfferRepository implements OfferRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function getById($offerId)
+    public function getById(int $offerId): OfferInterface
     {
         $offer = $this->offerCollectionFactory->create()->getNewEmptyItem();
 
@@ -101,7 +102,7 @@ class OfferRepository implements OfferRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function delete(OfferInterface $offer)
+    public function delete(OfferInterface $offer): void
     {
         try {
             $this->resource->delete($offer);
@@ -113,7 +114,7 @@ class OfferRepository implements OfferRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function deleteById($offerId)
+    public function deleteById($offerId): void
     {
         $this->delete($this->getById($offerId));
     }
@@ -121,7 +122,7 @@ class OfferRepository implements OfferRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function getList(SearchCriteriaInterface $criteria)
+    public function getList(SearchCriteriaInterface $criteria): OfferSearchResultsInterface
     {
         $searchResults = $this->searchResultsFactory->create();
         $searchResults->setSearchCriteria($criteria);
@@ -141,7 +142,7 @@ class OfferRepository implements OfferRepositoryInterface
      *
      * @return Collection
      */
-    private function getOfferCollection(SearchCriteriaInterface $criteria)
+    private function getOfferCollection(SearchCriteriaInterface $criteria): Collection
     {
         $collection = $this->offerCollectionFactory->create();
 
@@ -165,7 +166,7 @@ class OfferRepository implements OfferRepositoryInterface
     private function addFiltersToCollection(
         Collection $collection,
         SearchCriteriaInterface $criteria
-    ) {
+    ): self {
         foreach ($criteria->getFilterGroups() as $filterGroup) {
             foreach ($filterGroup->getFilters() as $filter) {
                 $condition = $filter->getConditionType() ?: 'eq';
@@ -187,7 +188,7 @@ class OfferRepository implements OfferRepositoryInterface
     private function addSortOrdersToCollection(
         Collection $collection,
         SearchCriteriaInterface $criteria
-    ) {
+    ): self {
         $sortOrders = $criteria->getSortOrders();
 
         if ($sortOrders) {

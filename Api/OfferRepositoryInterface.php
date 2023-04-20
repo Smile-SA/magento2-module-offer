@@ -30,7 +30,7 @@ interface OfferRepositoryInterface
 
      * @return \Smile\Offer\Api\Data\OfferInterface
      */
-    public function save(Data\OfferInterface $offer);
+    public function save(Data\OfferInterface $offer): Data\OfferInterface;
 
     /**
      * Retrieve offer by id
@@ -41,7 +41,7 @@ interface OfferRepositoryInterface
      *
      * @return \Smile\Offer\Api\Data\OfferInterface
      */
-    public function getById($offerId);
+    public function getById(int $offerId): Data\OfferInterface;
 
     /**
      * Retrieve offers matching the specified criteria.
@@ -52,7 +52,7 @@ interface OfferRepositoryInterface
      *
      * @return \Smile\Offer\Api\Data\OfferSearchResultsInterface
      */
-    public function getList(\Magento\Framework\Api\SearchCriteriaInterface $searchCriteria);
+    public function getList(\Magento\Framework\Api\SearchCriteriaInterface $searchCriteria): Data\OfferSearchResultsInterface;
 
     /**
      * Delete offer.
@@ -61,9 +61,9 @@ interface OfferRepositoryInterface
      *
      * @param \Smile\Offer\Api\Data\OfferInterface $offer The offer
      *
-     * @return bool true on success
+     * @return void - bool true on success
      */
-    public function delete(Data\OfferInterface $offer);
+    public function delete(Data\OfferInterface $offer): void;
 
     /**
      * Delete offer by ID.
@@ -73,7 +73,7 @@ interface OfferRepositoryInterface
      *
      * @param int $offerId The offer Id
      *
-     * @return bool true on success
+     * @return void - bool true on success
      */
-    public function deleteById($offerId);
+    public function deleteById(int $offerId): void;
 }

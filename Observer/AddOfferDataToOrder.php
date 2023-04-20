@@ -13,6 +13,7 @@
 
 namespace Smile\Offer\Observer;
 
+use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 
 /**
@@ -27,11 +28,11 @@ class AddOfferDataToOrder implements ObserverInterface
     /**
      * Set offer data to order from quote
      *
-     * @param \Magento\Framework\Event\Observer $observer The observer
+     * @param Observer $observer The observer
      *
      * @return $this
      */
-    public function execute(\Magento\Framework\Event\Observer $observer)
+    public function execute(Observer $observer): self
     {
         $observer->getEvent()->getOrder()->setSellerId($observer->getEvent()->getQuote()->getSellerId());
         $observer->getEvent()->getOrder()->setPickupDate($observer->getEvent()->getQuote()->getPickupDate());

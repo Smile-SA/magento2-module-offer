@@ -31,7 +31,7 @@ class InstallSchema implements InstallSchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function install(SchemaSetupInterface $setup, ModuleContextInterface $context)
+    public function install(SchemaSetupInterface $setup, ModuleContextInterface $context): void
     {
         $setup->startSetup();
 
@@ -42,11 +42,11 @@ class InstallSchema implements InstallSchemaInterface
     /**
      * Create the offer table.
      *
-     * @param \Magento\Framework\Setup\SchemaSetupInterface $setup The Setup
+     * @param SchemaSetupInterface $setup The Setup
      *
      * @throws \Zend_Db_Exception
      */
-    private function createOfferTable(SchemaSetupInterface $setup)
+    private function createOfferTable(SchemaSetupInterface $setup): void
     {
         $table = $setup->getConnection()
             ->newTable($setup->getTable('smile_offer'))

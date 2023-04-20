@@ -56,42 +56,42 @@ interface OfferInterface extends \Magento\Framework\Api\CustomAttributesDataInte
      *
      * @return int|null
      */
-    public function getId();
+    public function getId(): int|null;
 
     /**
      * Get product id.
      *
      * @return int|null
      */
-    public function getProductId();
+    public function getProductId(): int|null;
 
     /**
      * Get seller id.
      *
      * @return int|null
      */
-    public function getSellerId();
+    public function getSellerId(): int|null;
 
     /**
      * Is the offer enabled.
      *
      * @return bool|null
      */
-    public function isAvailable();
+    public function isAvailable(): bool|null;
 
     /**
      * Offer price.
      *
      * @return float|null
      */
-    public function getPrice();
+    public function getPrice(): float|null;
 
     /**
      * Offer special price.
      *
      * @return float|null
      */
-    public function getSpecialPrice();
+    public function getSpecialPrice(): float|null;
 
     /**
      * Set ID.
@@ -100,7 +100,7 @@ interface OfferInterface extends \Magento\Framework\Api\CustomAttributesDataInte
      *
      * @return \Smile\Offer\Api\Data\OfferInterface
      */
-    public function setId($offerId);
+    public function setId($offerId): \Smile\Offer\Api\Data\OfferInterface;
 
     /**
      * Set product id.
@@ -109,7 +109,7 @@ interface OfferInterface extends \Magento\Framework\Api\CustomAttributesDataInte
      *
      * @return \Smile\Offer\Api\Data\OfferInterface
      */
-    public function setProductId($productId);
+    public function setProductId(int $productId): \Smile\Offer\Api\Data\OfferInterface;
 
     /**
      * Set seller id.
@@ -118,7 +118,7 @@ interface OfferInterface extends \Magento\Framework\Api\CustomAttributesDataInte
      *
      * @return \Smile\Offer\Api\Data\OfferInterface
      */
-    public function setSellerId($sellerId);
+    public function setSellerId(int $sellerId): \Smile\Offer\Api\Data\OfferInterface;
 
     /**
      * Set offer availability.
@@ -127,7 +127,7 @@ interface OfferInterface extends \Magento\Framework\Api\CustomAttributesDataInte
      *
      * @return \Smile\Offer\Api\Data\OfferInterface
      */
-    public function setIsAvailable($availability);
+    public function setIsAvailable(bool $availability): \Smile\Offer\Api\Data\OfferInterface;
 
     /**
      * Set offer price.
@@ -136,7 +136,7 @@ interface OfferInterface extends \Magento\Framework\Api\CustomAttributesDataInte
      *
      * @return \Smile\Offer\Api\Data\OfferInterface
      */
-    public function setPrice($price);
+    public function setPrice(float $price): \Smile\Offer\Api\Data\OfferInterface;
 
     /**
      * Set offer special price.
@@ -145,14 +145,14 @@ interface OfferInterface extends \Magento\Framework\Api\CustomAttributesDataInte
      *
      * @return \Smile\Offer\Api\Data\OfferInterface
      */
-    public function setSpecialPrice($price);
+    public function setSpecialPrice(float $price): \Smile\Offer\Api\Data\OfferInterface;
 
     /**
      * Retrieve existing extension attributes object or create a new one.
      *
      * @return \Smile\Offer\Api\Data\OfferExtensionInterface|null
      */
-    public function getExtensionAttributes();
+    public function getExtensionAttributes(): \Smile\Offer\Api\Data\OfferExtensionInterface|null;
 
     /**
      * Set an extension attributes object.
@@ -161,5 +161,5 @@ interface OfferInterface extends \Magento\Framework\Api\CustomAttributesDataInte
      *
      * @return $this
      */
-    public function setExtensionAttributes(\Smile\Offer\Api\Data\OfferExtensionInterface $extensionAttributes);
+    public function setExtensionAttributes(\Smile\Offer\Api\Data\OfferExtensionInterface $extensionAttributes): self;
 }

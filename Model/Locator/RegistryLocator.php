@@ -28,18 +28,19 @@ class RegistryLocator implements LocatorInterface
     /**
      * @var Registry
      */
-    private $registry;
+    private Registry $registry;
 
     /**
      * @var OfferInterface
      */
-    private $offer;
+    private OfferInterface $offer;
 
     /**
      * @param Registry $registry The application registry
      */
-    public function __construct(Registry $registry)
-    {
+    public function __construct(
+        Registry $registry
+    ) {
         $this->registry = $registry;
     }
 
@@ -48,7 +49,7 @@ class RegistryLocator implements LocatorInterface
      *
      * @throws NotFoundException
      */
-    public function getOffer()
+    public function getOffer(): OfferInterface
     {
         if (null !== $this->offer) {
             return $this->offer;

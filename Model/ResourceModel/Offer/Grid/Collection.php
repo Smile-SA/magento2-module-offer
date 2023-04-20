@@ -12,6 +12,7 @@
  */
 namespace Smile\Offer\Model\ResourceModel\Offer\Grid;
 
+use Magento\Catalog\Model\Product;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Data\Collection\Db\FetchStrategyInterface;
 use Magento\Framework\Data\Collection\EntityFactoryInterface;
@@ -38,12 +39,12 @@ class Collection extends \Smile\Offer\Model\ResourceModel\Offer\Collection
     /**
      * @var EntityFactory
      */
-    private $eavEntityFactory;
+    private EntityFactory $eavEntityFactory;
 
     /**
      * @var array an array of external entities attributes to add to the current collection.
      */
-    private $fieldAlias = [];
+    private array $fieldAlias = [];
 
     /**
      * Collection constructor.
@@ -67,7 +68,7 @@ class Collection extends \Smile\Offer\Model\ResourceModel\Offer\Collection
         EntityFactory $eavEntityFactory,
         $connection = null,
         $resource = null,
-        $sellerEntity = null
+        ?string $sellerEntity = null
     ) {
         parent::__construct(
             $entityFactory,
@@ -87,21 +88,21 @@ class Collection extends \Smile\Offer\Model\ResourceModel\Offer\Collection
      * Process left join on catalog/product entity table to retrieve the SKU Field.
      * Also bind "sku" column to a proper alias if given
      *
-     * @param string $alias The alias for SKU field, if any.
+     * @param ?string $alias The alias for SKU field, if any.
      *
      * @return $this;
      */
-    public function addProductSkuToSelect($alias = null)
+    public function addProductSkuToSelect(string $alias = null): self
     {
-        $skuField = \Magento\Catalog\Model\Product::SKU;
+        $skuField = Product::SKU;
 
-        if (isset($this->fieldAlias[\Magento\Catalog\Model\Product::ENTITY][$skuField])) {
+        if (isset($this->fieldAlias[Product::ENTITY][$skuField])) {
             return $this;
         }
 
         $columns = (null === $alias) ? [$skuField => $skuField] : [$alias => $skuField];
 
-        $this->fieldAlias[\Magento\Catalog\Model\Product::ENTITY][$skuField] = (null === $alias) ? $skuField : $alias;
+        $this->fieldAlias[Product::ENTITY][$skuField] = (null === $alias) ? $skuField : $alias;
 
         $fromPart = $this->getSelect()->getPart('from');
         if(!isset($fromPart['catalog_product_entity'])) {
@@ -120,32 +121,32 @@ class Collection extends \Smile\Offer\Model\ResourceModel\Offer\Collection
      *
      * @param array $condition A SQL Condition
      */
-    public function setSkuFilter($condition)
+    public function setSkuFilter(array $condition): void
     {
         $this->addProductSkuToSelect();
-        $field = $this->fieldAlias[\Magento\Catalog\Model\Product::ENTITY][\Magento\Catalog\Model\Product::SKU];
+        $field = $this->fieldAlias[Product::ENTITY][Product::SKU];
         $this->addFieldToFilter($field, $condition);
     }
 
     /**
      * Add Attribute of an other entity to current collection (Seller, Product).
      *
-     * @param string $entityType    The Entity Type
-     * @param string $attributeCode The Attribute code
-     * @param string $alias         The field alias, if any
-     * @param int    $storeId       The current store scope for seller attributes retrieval
-     * @param array  $join          Join table for Magento EE
+     * @param string  $entityType    The Entity Type
+     * @param string  $attributeCode The Attribute code
+     * @param ?string $alias         The field alias, if any
+     * @param ?int    $storeId       The current store scope for seller attributes retrieval
+     * @param ?array  $join          Join table for Magento EE
      *
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      * @return $this
      */
     public function addEntityAttributeToSelect(
-        $entityType,
-        $attributeCode,
-        $alias = null,
-        $storeId = null,
-        $join = null
-    ) {
+        string $entityType,
+        string $attributeCode,
+        string $alias = null,
+        int $storeId = null,
+        array $join = null
+    ): self {
         if (isset($this->fieldAlias[$entityType][$attributeCode])) {
             return $this;
         }
@@ -208,6 +209,8 @@ class Collection extends \Smile\Offer\Model\ResourceModel\Offer\Collection
             $this->getSelect()->where("{$attributeTableAlias}_d.store_id = ?", $storeCondition);
             $this->getSelect()->group("main_table.{$idField}");
         }
+
+        return $this;
     }
 
     /**
@@ -217,7 +220,7 @@ class Collection extends \Smile\Offer\Model\ResourceModel\Offer\Collection
      * @param string $field      The field
      * @param array  $condition  The SQL Condition
      */
-    public function addEntityAttributeFilter($entityType, $field, $condition)
+    public function addEntityAttributeFilter(string $entityType, string $field, array $condition): void
     {
         $attributeTableAlias = $this->getEntityAttributeTableAlias($entityType, $field);
         $field = $attributeTableAlias . "_d.value";
@@ -232,7 +235,7 @@ class Collection extends \Smile\Offer\Model\ResourceModel\Offer\Collection
      * @return string
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function getForeignKeyByEntityType($entity)
+    public function getForeignKeyByEntityType(string $entity): string
     {
         $metadata   = $this->metadataPool->getMetadata($entity);
         $entityType = $metadata->getEavEntityType();
@@ -241,11 +244,11 @@ class Collection extends \Smile\Offer\Model\ResourceModel\Offer\Collection
             return \Smile\Offer\Api\Data\OfferInterface::SELLER_ID;
         }
 
-        if ($entityType == \Magento\Catalog\Model\Product::ENTITY) {
+        if ($entityType == Product::ENTITY) {
             return \Smile\Offer\Api\Data\OfferInterface::PRODUCT_ID;
         }
 
-        throw new NoSuchEntityException("Unable to retrieve fetch strategy for {$entityType}");
+        throw new NoSuchEntityException(__("Unable to retrieve fetch strategy for {$entityType}"));
     }
 
     /**
@@ -256,7 +259,7 @@ class Collection extends \Smile\Offer\Model\ResourceModel\Offer\Collection
      *
      * @return string
      */
-    private function getEntityAttributeTableAlias($entity, $attributeCode)
+    private function getEntityAttributeTableAlias(string $entity, string $attributeCode): string
     {
         $metadata   = $this->metadataPool->getMetadata($entity);
         $entityType = $metadata->getEavEntityType();

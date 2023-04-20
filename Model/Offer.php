@@ -14,8 +14,9 @@
 
 namespace Smile\Offer\Model;
 
-use Smile\Offer\Api\Data\OfferInterface;
 use Magento\Framework\DataObject\IdentityInterface;
+use Magento\Framework\Model\AbstractExtensibleModel;
+use Smile\Offer\Api\Data\OfferInterface;
 
 /**
  * Offer Model
@@ -26,7 +27,7 @@ use Magento\Framework\DataObject\IdentityInterface;
  * @package  Smile\Offer
  * @author   Aurelien Foucret <aurelien.foucret@smile.fr>
  */
-class Offer extends \Magento\Framework\Model\AbstractExtensibleModel implements OfferInterface, IdentityInterface
+class Offer extends AbstractExtensibleModel implements OfferInterface, IdentityInterface
 {
     /**
      * @var string
@@ -46,7 +47,7 @@ class Offer extends \Magento\Framework\Model\AbstractExtensibleModel implements 
     /**
      * {@inheritDoc}
      */
-    public function getId()
+    public function getId(): int|null
     {
         return $this->getData(self::OFFER_ID);
     }
@@ -54,7 +55,7 @@ class Offer extends \Magento\Framework\Model\AbstractExtensibleModel implements 
     /**
      * {@inheritDoc}
      */
-    public function getProductId()
+    public function getProductId(): int|null
     {
         return $this->getData(self::PRODUCT_ID);
     }
@@ -63,7 +64,7 @@ class Offer extends \Magento\Framework\Model\AbstractExtensibleModel implements 
      *
      * {@inheritDoc}
      */
-    public function getSellerId()
+    public function getSellerId(): int|null
     {
         return $this->getData(self::SELLER_ID);
     }
@@ -71,7 +72,7 @@ class Offer extends \Magento\Framework\Model\AbstractExtensibleModel implements 
     /**
      * {@inheritDoc}
      */
-    public function isAvailable()
+    public function isAvailable(): bool|null
     {
         return (bool) $this->getData(self::IS_AVAILABLE);
     }
@@ -79,7 +80,7 @@ class Offer extends \Magento\Framework\Model\AbstractExtensibleModel implements 
     /**
      * {@inheritDoc}
      */
-    public function getPrice()
+    public function getPrice(): float|null
     {
         return $this->getData(self::PRICE);
     }
@@ -87,7 +88,7 @@ class Offer extends \Magento\Framework\Model\AbstractExtensibleModel implements 
     /**
      * {@inheritDoc}
      */
-    public function getSpecialPrice()
+    public function getSpecialPrice(): float|null
     {
         return $this->getData(self::SPECIAL_PRICE);
     }
@@ -95,7 +96,7 @@ class Offer extends \Magento\Framework\Model\AbstractExtensibleModel implements 
     /**
      * {@inheritDoc}
      */
-    public function setId($offerId)
+    public function setId($offerId): OfferInterface
     {
         return $this->setData(self::OFFER_ID, $offerId);
     }
@@ -103,7 +104,7 @@ class Offer extends \Magento\Framework\Model\AbstractExtensibleModel implements 
     /**
      * {@inheritDoc}
      */
-    public function setProductId($productId)
+    public function setProductId(int $productId): OfferInterface
     {
         return $this->setData(self::PRODUCT_ID, $productId);
     }
@@ -111,7 +112,7 @@ class Offer extends \Magento\Framework\Model\AbstractExtensibleModel implements 
     /**
      * {@inheritDoc}
      */
-    public function setSellerId($sellerId)
+    public function setSellerId(int $sellerId): OfferInterface
     {
         return $this->setData(self::SELLER_ID, $sellerId);
     }
@@ -119,7 +120,7 @@ class Offer extends \Magento\Framework\Model\AbstractExtensibleModel implements 
     /**
      * {@inheritDoc}
      */
-    public function setIsAvailable($availability)
+    public function setIsAvailable(bool $availability): OfferInterface
     {
         return $this->setData(self::IS_AVAILABLE, $availability);
     }
@@ -127,7 +128,7 @@ class Offer extends \Magento\Framework\Model\AbstractExtensibleModel implements 
     /**
      * {@inheritDoc}
      */
-    public function setPrice($price)
+    public function setPrice(float $price): OfferInterface
     {
         $this->setData(self::PRICE, $price);
 
@@ -141,7 +142,7 @@ class Offer extends \Magento\Framework\Model\AbstractExtensibleModel implements 
     /**
      * {@inheritDoc}
      */
-    public function setSpecialPrice($price)
+    public function setSpecialPrice(float $price): OfferInterface
     {
         $this->setData(self::SPECIAL_PRICE, $price);
 
@@ -155,7 +156,7 @@ class Offer extends \Magento\Framework\Model\AbstractExtensibleModel implements 
     /**
      * {@inheritDoc}
      */
-    public function getIdentities()
+    public function getIdentities(): array
     {
         $identities = [self::CACHE_TAG . '_' . $this->getId()];
 
@@ -180,7 +181,7 @@ class Offer extends \Magento\Framework\Model\AbstractExtensibleModel implements 
      *
      * @throws \Exception
      */
-    public function loadPost(array $data)
+    public function loadPost(array $data): self
     {
         $validationResults = $this->validateData(new \Magento\Framework\DataObject($data));
         if ($validationResults !== true) {
@@ -205,7 +206,7 @@ class Offer extends \Magento\Framework\Model\AbstractExtensibleModel implements 
     /**
      * {@inheritDoc}
      */
-    public function getExtensionAttributes()
+    public function getExtensionAttributes(): \Smile\Offer\Api\Data\OfferExtensionInterface|null
     {
         $extensionAttributes = $this->_getExtensionAttributes();
         if (!$extensionAttributes) {
@@ -220,7 +221,7 @@ class Offer extends \Magento\Framework\Model\AbstractExtensibleModel implements 
     /**
      * {@inheritDoc}
      */
-    public function setExtensionAttributes(\Smile\Offer\Api\Data\OfferExtensionInterface $extensionAttributes)
+    public function setExtensionAttributes(\Smile\Offer\Api\Data\OfferExtensionInterface $extensionAttributes): self
     {
         return $this->_setExtensionAttributes($extensionAttributes);
     }
@@ -230,7 +231,7 @@ class Offer extends \Magento\Framework\Model\AbstractExtensibleModel implements 
      *
      * @SuppressWarnings(PHPMD.CamelCaseMethodName) Method is inherited
      */
-    protected function _construct()
+    protected function _construct(): void
     {
         $this->_init('Smile\Offer\Model\ResourceModel\Offer');
     }
@@ -242,7 +243,7 @@ class Offer extends \Magento\Framework\Model\AbstractExtensibleModel implements 
      *
      * @return bool|string[] - return true if validation passed successfully. Array with errors description otherwise
      */
-    private function validateData(\Magento\Framework\DataObject $dataObject)
+    private function validateData(\Magento\Framework\DataObject $dataObject): bool|array
     {
         $result = [];
 

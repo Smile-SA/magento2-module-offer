@@ -29,17 +29,18 @@ use Magento\Customer\Api\Data\GroupInterface as CustomerGroupInterface;
 class OfferData implements DatasourceInterface
 {
     /**
-     * @var \Smile\Offer\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\OfferData
+     * @var ResourceModel
      */
-    private $resourceModel;
+    private ResourceModel $resourceModel;
 
     /**
      * Constructor.
      *
      * @param ResourceModel $resourceModel Resource model
      */
-    public function __construct(ResourceModel $resourceModel)
-    {
+    public function __construct(
+        ResourceModel $resourceModel
+    ) {
         $this->resourceModel = $resourceModel;
     }
 
@@ -48,7 +49,7 @@ class OfferData implements DatasourceInterface
      *
      * {@inheritdoc}
      */
-    public function addData($storeId, array $indexData)
+    public function addData($storeId, array $indexData): array
     {
         $offerData = $this->resourceModel->loadOfferData(array_keys($indexData));
 
@@ -75,7 +76,7 @@ class OfferData implements DatasourceInterface
      *
      * @return array
      */
-    private function processOfferPrices($offerData, $productData)
+    private function processOfferPrices(array $offerData, array $productData): array
     {
         $defaultPriceData = [];
         if (isset($productData['price'])) {

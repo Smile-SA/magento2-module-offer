@@ -28,7 +28,7 @@ interface OfferSearchResultsInterface extends SearchResultsInterface
      *
      * @return \Smile\Offer\Api\Data\OfferInterface[]
      */
-    public function getItems();
+    public function getItems(): array;
 
     /**
      * Set offers list.
@@ -37,5 +37,5 @@ interface OfferSearchResultsInterface extends SearchResultsInterface
      *
      * @return $this
      */
-    public function setItems(array $items);
+    public function setItems(array $items): self;
 }

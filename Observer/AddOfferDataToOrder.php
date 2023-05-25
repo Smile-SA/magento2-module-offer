@@ -1,15 +1,4 @@
 <?php
-/**
- * DISCLAIMER
- * Do not edit or add to this file if you wish to upgrade this module to newer
- * versions in the future.
- *
- * @category  Smile
- * @package   Smile\Offer
- * @author    Romain Ruaud <romain.ruaud@smile.fr>
- * @copyright 2016 Smile
- * @license   Open Software License ("OSL") v. 3.0
- */
 
 namespace Smile\Offer\Observer;
 
@@ -17,22 +6,14 @@ use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 
 /**
- * Copy offer data from quote to order
- *
- * @category Smile
- * @package  Smile\Offer
- * @author   Romain Ruaud <romain.ruaud@smile.fr>
+ * Copy offer data from quote to order.
  */
 class AddOfferDataToOrder implements ObserverInterface
 {
     /**
-     * Set offer data to order from quote
-     *
-     * @param Observer $observer The observer
-     *
-     * @return $this
+     * @inheritdoc
      */
-    public function execute(Observer $observer): self
+    public function execute(Observer $observer)
     {
         $observer->getEvent()->getOrder()->setSellerId($observer->getEvent()->getQuote()->getSellerId());
         $observer->getEvent()->getOrder()->setPickupDate($observer->getEvent()->getQuote()->getPickupDate());

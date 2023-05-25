@@ -1,29 +1,15 @@
 <?xml version="1.0"?>
-<!--
-/**
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade this module to newer
- * versions in the future.
- *
- * @category  Smile
- * @package   Smile\Offer
- * @author    Romain Ruaud <romain.ruaud@smile.fr>
- * @copyright 2016 Smile
- * @license   Open Software License ("OSL") v. 3.0
- */
--->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
     <event name="sales_model_service_quote_submit_before">
-        <observer name="smile_retailer_suite_offer" instance="Smile\Offer\Observer\AddOfferDataToOrder" shared="false" />
+        <observer name="smile_retailer_suite_offer" instance="Smile\Offer\Observer\AddOfferDataToOrder" shared="false"/>
     </event>
 
     <event name="smile_offer_api_data_offerinterface_save_after">
-        <observer name="reindex_offer_product_after_save" instance="Smile\Offer\Observer\ReindexOffer" />
+        <observer name="reindex_offer_product_after_save" instance="Smile\Offer\Observer\ReindexOffer"/>
     </event>
 
     <event name="smile_offer_api_data_offerinterface_delete_after">
-        <observer name="reindex_offer_product_after_delete" instance="Smile\Offer\Observer\ReindexOffer" />
+        <observer name="reindex_offer_product_after_delete" instance="Smile\Offer\Observer\ReindexOffer"/>
     </event>
 
 </config>

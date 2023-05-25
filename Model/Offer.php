@@ -1,100 +1,86 @@
 <?php
-/**
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade this module to newer
- * versions in the future.
- *
- * @category  Smile
- * @package   Smile\Offer
- * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2016 Smile
- * @license   Open Software License ("OSL") v. 3.0
- */
 
 namespace Smile\Offer\Model;
 
+use Exception;
+use Magento\Catalog\Model\Product;
+use Magento\Framework\App\Area;
+use Magento\Framework\DataObject;
 use Magento\Framework\DataObject\IdentityInterface;
 use Magento\Framework\Model\AbstractExtensibleModel;
+use Smile\Offer\Api\Data\OfferExtensionInterface;
 use Smile\Offer\Api\Data\OfferInterface;
 
 /**
- * Offer Model
- *
- * @SuppressWarnings(PHPMD.CamelCasePropertyName) properties are inherited.
- *
- * @category Smile
- * @package  Smile\Offer
- * @author   Aurelien Foucret <aurelien.foucret@smile.fr>
+ * Offer Model.
  */
 class Offer extends AbstractExtensibleModel implements OfferInterface, IdentityInterface
 {
-    /**
-     * @var string
-     */
-    const CACHE_TAG = 'smile_offer';
+    public const CACHE_TAG = 'smile_offer';
 
-    /**
-     * @var string
-     */
+    // phpcs:disable SlevomatCodingStandard.TypeHints.PropertyTypeHint.MissingAnyTypeHint
     protected $_cacheTag = self::CACHE_TAG;
-
-    /**
-     * @var string
-     */
     protected $_eventPrefix = 'smile_offer';
+    // phpcs:enable
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
-    public function getId(): int|null
+    protected function _construct()
+    {
+        $this->_init(ResourceModel\Offer::class);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getId(): ?int
     {
         return $this->getData(self::OFFER_ID);
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
-    public function getProductId(): int|null
+    public function getProductId(): ?int
     {
         return $this->getData(self::PRODUCT_ID);
     }
 
     /**
-     *
-     * {@inheritDoc}
+     * @inheritdoc
      */
-    public function getSellerId(): int|null
+    public function getSellerId(): ?int
     {
         return $this->getData(self::SELLER_ID);
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
-    public function isAvailable(): bool|null
+    public function isAvailable(): ?bool
     {
         return (bool) $this->getData(self::IS_AVAILABLE);
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
-    public function getPrice(): float|null
+    public function getPrice(): ?float
     {
         return $this->getData(self::PRICE);
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
-    public function getSpecialPrice(): float|null
+    public function getSpecialPrice(): ?float
     {
         return $this->getData(self::SPECIAL_PRICE);
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     public function setId($offerId): OfferInterface
     {
@@ -102,7 +88,7 @@ class Offer extends AbstractExtensibleModel implements OfferInterface, IdentityI
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     public function setProductId(int $productId): OfferInterface
     {
@@ -110,7 +96,7 @@ class Offer extends AbstractExtensibleModel implements OfferInterface, IdentityI
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     public function setSellerId(int $sellerId): OfferInterface
     {
@@ -118,7 +104,7 @@ class Offer extends AbstractExtensibleModel implements OfferInterface, IdentityI
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     public function setIsAvailable(bool $availability): OfferInterface
     {
@@ -126,9 +112,9 @@ class Offer extends AbstractExtensibleModel implements OfferInterface, IdentityI
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
-    public function setPrice(float $price): OfferInterface
+    public function setPrice(?float $price): OfferInterface
     {
         $this->setData(self::PRICE, $price);
 
@@ -140,9 +126,9 @@ class Offer extends AbstractExtensibleModel implements OfferInterface, IdentityI
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
-    public function setSpecialPrice(float $price): OfferInterface
+    public function setSpecialPrice(?float $price): OfferInterface
     {
         $this->setData(self::SPECIAL_PRICE, $price);
 
@@ -154,17 +140,17 @@ class Offer extends AbstractExtensibleModel implements OfferInterface, IdentityI
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     public function getIdentities(): array
     {
         $identities = [self::CACHE_TAG . '_' . $this->getId()];
 
         if (!$this->getId() || $this->hasDataChanges() || $this->isDeleted()) {
-            $identities[] = \Magento\Catalog\Model\Product::CACHE_TAG . '_' . $this->getProductId();
+            $identities[] = Product::CACHE_TAG . '_' . $this->getProductId();
         }
 
-        if ($this->_appState->getAreaCode() == \Magento\Framework\App\Area::AREA_FRONTEND) {
+        if ($this->_appState->getAreaCode() == Area::AREA_FRONTEND) {
             $identities[] = self::CACHE_TAG;
         }
 
@@ -173,19 +159,16 @@ class Offer extends AbstractExtensibleModel implements OfferInterface, IdentityI
 
     /**
      * Initialize offer  model data from array.
+     *
      * Convert Date Fields to proper DateTime objects.
      *
-     * @param array $data The data
-     *
-     * @return $this
-     *
-     * @throws \Exception
+     * @throws Exception
      */
     public function loadPost(array $data): self
     {
-        $validationResults = $this->validateData(new \Magento\Framework\DataObject($data));
+        $validationResults = $this->validateData(new DataObject($data));
         if ($validationResults !== true) {
-            throw new \Exception(implode($validationResults));
+            throw new Exception(implode($validationResults));
         }
 
         foreach ($data as $key => $value) {
@@ -204,14 +187,13 @@ class Offer extends AbstractExtensibleModel implements OfferInterface, IdentityI
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
-    public function getExtensionAttributes(): \Smile\Offer\Api\Data\OfferExtensionInterface|null
+    public function getExtensionAttributes(): ?OfferExtensionInterface
     {
         $extensionAttributes = $this->_getExtensionAttributes();
         if (!$extensionAttributes) {
-            $extensionAttributes = $this->extensionAttributesFactory
-                ->create('Smile\Offer\Api\Data\OfferInterface');
+            $extensionAttributes = $this->extensionAttributesFactory->create(OfferInterface::class);
             $this->_setExtensionAttributes($extensionAttributes);
         }
 
@@ -219,35 +201,24 @@ class Offer extends AbstractExtensibleModel implements OfferInterface, IdentityI
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
-    public function setExtensionAttributes(\Smile\Offer\Api\Data\OfferExtensionInterface $extensionAttributes): self
+    public function setExtensionAttributes(OfferExtensionInterface $extensionAttributes): self
     {
         return $this->_setExtensionAttributes($extensionAttributes);
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @SuppressWarnings(PHPMD.CamelCaseMethodName) Method is inherited
-     */
-    protected function _construct(): void
-    {
-        $this->_init('Smile\Offer\Model\ResourceModel\Offer');
-    }
-
-    /**
-     * Validate offer data
-     *
-     * @param \Magento\Framework\DataObject $dataObject The Offer
+     * Validate offer data.
      *
      * @return bool|string[] - return true if validation passed successfully. Array with errors description otherwise
      */
-    private function validateData(\Magento\Framework\DataObject $dataObject): bool|array
+    private function validateData(DataObject $dataObject): bool|array
     {
         $result = [];
 
-        if (!$dataObject->hasData(OfferInterface::PRODUCT_ID)
+        if (
+            !$dataObject->hasData(OfferInterface::PRODUCT_ID)
             || ("" == $dataObject->getData(OfferInterface::PRODUCT_ID) )
         ) {
             $result[] = __('Product is required.');

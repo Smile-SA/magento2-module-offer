@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smile\Offer\Model;
 
 use Exception;
@@ -26,7 +28,7 @@ class Offer extends AbstractExtensibleModel implements OfferInterface, IdentityI
     /**
      * @inheritdoc
      */
-    protected function _construct()
+    protected function _construct(): void
     {
         $this->_init(ResourceModel\Offer::class);
     }
@@ -34,9 +36,9 @@ class Offer extends AbstractExtensibleModel implements OfferInterface, IdentityI
     /**
      * @inheritdoc
      */
-    public function getId(): ?int
+    public function getOfferId(): ?int
     {
-        return $this->getData(self::OFFER_ID);
+        return (int) $this->getData(self::OFFER_ID);
     }
 
     /**
@@ -44,7 +46,7 @@ class Offer extends AbstractExtensibleModel implements OfferInterface, IdentityI
      */
     public function getProductId(): ?int
     {
-        return $this->getData(self::PRODUCT_ID);
+        return (int) $this->getData(self::PRODUCT_ID);
     }
 
     /**
@@ -52,7 +54,7 @@ class Offer extends AbstractExtensibleModel implements OfferInterface, IdentityI
      */
     public function getSellerId(): ?int
     {
-        return $this->getData(self::SELLER_ID);
+        return (int) $this->getData(self::SELLER_ID);
     }
 
     /**
@@ -68,7 +70,7 @@ class Offer extends AbstractExtensibleModel implements OfferInterface, IdentityI
      */
     public function getPrice(): ?float
     {
-        return $this->getData(self::PRICE);
+        return (float) $this->getData(self::PRICE);
     }
 
     /**
@@ -76,13 +78,13 @@ class Offer extends AbstractExtensibleModel implements OfferInterface, IdentityI
      */
     public function getSpecialPrice(): ?float
     {
-        return $this->getData(self::SPECIAL_PRICE);
+        return (float) $this->getData(self::SPECIAL_PRICE);
     }
 
     /**
      * @inheritdoc
      */
-    public function setId($offerId): OfferInterface
+    public function setOfferId(int $offerId): OfferInterface
     {
         return $this->setData(self::OFFER_ID, $offerId);
     }
@@ -144,9 +146,9 @@ class Offer extends AbstractExtensibleModel implements OfferInterface, IdentityI
      */
     public function getIdentities(): array
     {
-        $identities = [self::CACHE_TAG . '_' . $this->getId()];
+        $identities = [self::CACHE_TAG . '_' . $this->getOfferId()];
 
-        if (!$this->getId() || $this->hasDataChanges() || $this->isDeleted()) {
+        if (!$this->getOfferId() || $this->hasDataChanges() || $this->isDeleted()) {
             $identities[] = Product::CACHE_TAG . '_' . $this->getProductId();
         }
 
@@ -197,6 +199,7 @@ class Offer extends AbstractExtensibleModel implements OfferInterface, IdentityI
             $this->_setExtensionAttributes($extensionAttributes);
         }
 
+        /** @var OfferExtensionInterface $extensionAttributes */
         return $extensionAttributes;
     }
 

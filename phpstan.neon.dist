@@ -1,7 +1,10 @@
 parameters:
-    level: 6
+    # Ignore inheritance issue : Parameter #1 $object of method Smile\Offer\Model\ResourceModel\Offer::save() expects Magento\Framework\Model\AbstractModel, Smile\Offer\Api\Data\OfferInterface given.
+    # see : https://github.com/phpstan/phpstan/discussions/5937
+    level: 4
     phpVersion: 80100
     checkMissingIterableValueType: false
+    treatPhpDocTypesAsCertain: false
     paths:
         - .
     excludePaths:

@@ -1,10 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smile\Offer\Model;
 
 use Exception;
 use Magento\Framework\Api\SearchCriteriaInterface;
 use Magento\Framework\Api\SortOrder;
+use Magento\Framework\DataObject;
 use Magento\Framework\Exception\CouldNotDeleteException;
 use Magento\Framework\Exception\CouldNotSaveException;
 use Magento\Framework\Exception\NoSuchEntityException;
@@ -18,6 +21,8 @@ use Smile\Offer\Model\ResourceModel\Offer\CollectionFactory as OfferCollectionFa
 
 /**
  * Offer Repository implementation.
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class OfferRepository implements OfferRepositoryInterface
 {
@@ -45,12 +50,12 @@ class OfferRepository implements OfferRepositoryInterface
     /**
      * @inheritdoc
      */
-    public function getById(int $offerId): OfferInterface
+    public function getById(int $offerId): OfferInterface|DataObject
     {
         $offer = $this->offerCollectionFactory->create()->getNewEmptyItem();
 
         $this->resource->load($offer, $offerId);
-        if (!$offer->getId()) {
+        if (!$offer->getOfferId()) {
             throw new NoSuchEntityException(__('Offer with id "%1" does not exist.', $offerId));
         }
 

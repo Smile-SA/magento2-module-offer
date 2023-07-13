@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smile\Offer\Model;
 
+use Magento\Framework\DataObject;
 use Smile\Offer\Api\Data\OfferInterface;
 use Smile\Offer\Api\Data\OfferInterfaceFactory as OfferFactory;
 use Smile\Offer\Api\OfferManagementInterface;
@@ -26,6 +29,7 @@ class OfferManagement implements OfferManagementInterface
     */
     public function createOffer(int $sellerId, int $productId, array $params): OfferInterface
     {
+        /** @var Offer $offer */
         $offer = $this->offerFactory->create();
         $offer->setSellerId($sellerId);
         $offer->setProductId($productId);
@@ -59,7 +63,7 @@ class OfferManagement implements OfferManagementInterface
     /**
      * @inheritdoc
      */
-    public function getOffer(int $productId, int $sellerId): OfferInterface
+    public function getOffer(int $productId, int $sellerId): OfferInterface|DataObject
     {
         /** @var OfferCollection $offerCollection */
         $offerCollection = $this->offerCollectionFactory->create();

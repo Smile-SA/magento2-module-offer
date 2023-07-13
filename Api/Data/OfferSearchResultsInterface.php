@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smile\Offer\Api\Data;
 
 use Magento\Framework\Api\SearchResultsInterface;

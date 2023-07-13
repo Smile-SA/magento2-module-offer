@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smile\Offer\Api;
 
+use Magento\Framework\DataObject;
 use Smile\Offer\Api\Data\OfferInterface;
 
 /**
@@ -23,7 +26,7 @@ interface OfferManagementInterface
      * Get Offers for a given product Id, and a given date.
      *
      * @param int $productId The product Id
-     * @return OfferInterface[]
+     * @return OfferInterface[]|DataObject[]
      */
     public function getProductOffers(int $productId): array;
 
@@ -31,7 +34,7 @@ interface OfferManagementInterface
      * Get Offers for a given seller Id, and a given date.
      *
      * @param int $sellerId The seller Id
-     * @return OfferInterface[]
+     * @return OfferInterface[]|DataObject[]
      */
     public function getSellerOffers(int $sellerId): array;
 
@@ -40,7 +43,7 @@ interface OfferManagementInterface
      *
      * @param int $productId The product Id
      * @param int $sellerId  The seller Id
-     * @return OfferInterface
+     * @return OfferInterface|DataObject
      */
-    public function getOffer(int $productId, int $sellerId): OfferInterface;
+    public function getOffer(int $productId, int $sellerId): OfferInterface|DataObject;
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smile\Offer\Model\Product\Indexer\Fulltext\Datasource;
 
 use Magento\Customer\Api\Data\GroupInterface as CustomerGroupInterface;

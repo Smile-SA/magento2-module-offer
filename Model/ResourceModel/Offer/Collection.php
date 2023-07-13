@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smile\Offer\Model\ResourceModel\Offer;
 
 use Exception;

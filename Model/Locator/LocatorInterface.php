@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smile\Offer\Model\Locator;
 
 use Magento\Framework\Exception\NotFoundException;

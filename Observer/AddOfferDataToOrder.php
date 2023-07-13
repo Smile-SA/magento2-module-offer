@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smile\Offer\Observer;
 
 use Magento\Framework\Event\Observer;
@@ -17,7 +19,5 @@ class AddOfferDataToOrder implements ObserverInterface
     {
         $observer->getEvent()->getOrder()->setSellerId($observer->getEvent()->getQuote()->getSellerId());
         $observer->getEvent()->getOrder()->setPickupDate($observer->getEvent()->getQuote()->getPickupDate());
-
-        return $this;
     }
 }

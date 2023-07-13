@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smile\Offer\Model\ResourceModel;
 
 use Exception;
+use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Select;
 use Magento\Framework\EntityManager\EntityManager;
 use Magento\Framework\EntityManager\MetadataPool;
@@ -29,7 +32,7 @@ class Offer extends AbstractDb
     /**
      * @inheritdoc
      */
-    protected function _construct()
+    protected function _construct(): void
     {
         $metadata = $this->metadataPool->getMetadata(OfferInterface::class);
         $this->_init($metadata->getEntityTable(), $metadata->getIdentifierField());
@@ -38,7 +41,7 @@ class Offer extends AbstractDb
     /**
      * @inheritdoc
      */
-    public function load(AbstractModel $object, $value, $field = null)
+    public function load(AbstractModel $object, $value, $field = null): mixed
     {
         $offerId = $this->getOfferId($object, $value, $field);
         if ($offerId) {
@@ -51,7 +54,7 @@ class Offer extends AbstractDb
     /**
      * @inheritdoc
      */
-    public function save(AbstractModel $object)
+    public function save(AbstractModel $object): object
     {
         $this->_beforeSave($object);
         $this->entityManager->save($object);
@@ -62,7 +65,7 @@ class Offer extends AbstractDb
     /**
      * @inheritdoc
      */
-    public function delete(AbstractModel $object)
+    public function delete(AbstractModel $object): AbstractDb|Offer
     {
         $this->entityManager->delete($object);
 
@@ -72,7 +75,7 @@ class Offer extends AbstractDb
     /**
      * @inheritdoc
      */
-    public function getConnection()
+    public function getConnection(): AdapterInterface
     {
         return $this->metadataPool->getMetadata(OfferInterface::class)->getEntityConnection();
     }
@@ -83,7 +86,7 @@ class Offer extends AbstractDb
      * @throws Exception
      * @throws LocalizedException
      */
-    private function getOfferId(AbstractModel $object, mixed $value, ?string $field = null): int|false
+    private function getOfferId(AbstractModel $object, mixed $value, ?string $field = null): int
     {
         $entityMetadata = $this->metadataPool->getMetadata(OfferInterface::class);
 
@@ -103,6 +106,6 @@ class Offer extends AbstractDb
             $entityId = count($result) ? $result[0] : false;
         }
 
-        return $entityId;
+        return (int) $entityId;
     }
 }

@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smile\Offer\Api;
 
 use Magento\Framework\Api\SearchCriteriaInterface;
+use Magento\Framework\DataObject;
 
 /**
  * @api
@@ -23,9 +26,9 @@ interface OfferRepositoryInterface
      *
      * @throws \Magento\Framework\Exception\LocalizedException
      * @param int $offerId Offer id.
-     * @return \Smile\Offer\Api\Data\OfferInterface
+     * @return \Smile\Offer\Api\Data\OfferInterface|DataObject
      */
-    public function getById(int $offerId): Data\OfferInterface;
+    public function getById(int $offerId): Data\OfferInterface|DataObject;
 
     /**
      * Retrieve offers matching the specified criteria.

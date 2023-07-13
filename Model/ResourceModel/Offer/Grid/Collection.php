@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smile\Offer\Model\ResourceModel\Offer\Grid;
 
 use Magento\Catalog\Model\Product;
@@ -84,7 +86,7 @@ class Collection extends \Smile\Offer\Model\ResourceModel\Offer\Collection
     /**
      * Filter the collection for a given SKU.
      */
-    public function setSkuFilter(array $condition): void
+    public function setSkuFilter(mixed $condition): void
     {
         $this->addProductSkuToSelect();
         $field = $this->fieldAlias[Product::ENTITY][Product::SKU];
@@ -175,7 +177,7 @@ class Collection extends \Smile\Offer\Model\ResourceModel\Offer\Collection
     /**
      * Append filter on an external entity attribute (retailer or product).
      */
-    public function addEntityAttributeFilter(string $entityType, string $field, array $condition): void
+    public function addEntityAttributeFilter(string $entityType, string $field, mixed $condition): void
     {
         $attributeTableAlias = $this->getEntityAttributeTableAlias($entityType, $field);
         $field = $attributeTableAlias . "_d.value";

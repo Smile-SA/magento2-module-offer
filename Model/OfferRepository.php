@@ -39,6 +39,7 @@ class OfferRepository implements OfferRepositoryInterface
     public function save(OfferInterface $offer): OfferInterface
     {
         try {
+            /** @var Offer $offer */
             $this->resource->save($offer);
         } catch (Exception $exception) {
             throw new CouldNotSaveException(__($exception->getMessage()));
@@ -52,6 +53,7 @@ class OfferRepository implements OfferRepositoryInterface
      */
     public function getById(int $offerId): OfferInterface|DataObject
     {
+        /** @var Offer $offer */
         $offer = $this->offerCollectionFactory->create()->getNewEmptyItem();
 
         $this->resource->load($offer, $offerId);
@@ -68,6 +70,7 @@ class OfferRepository implements OfferRepositoryInterface
     public function delete(OfferInterface $offer): void
     {
         try {
+            /** @var Offer $offer */
             $this->resource->delete($offer);
         } catch (Exception $exception) {
             throw new CouldNotDeleteException(__($exception->getMessage()));
@@ -93,7 +96,9 @@ class OfferRepository implements OfferRepositoryInterface
         $collection = $this->getOfferCollection($criteria);
 
         $searchResults->setTotalCount($collection->getSize());
-        $searchResults->setItems($collection->getItems());
+        /** @var OfferInterface[] $items */
+        $items = $collection->getItems();
+        $searchResults->setItems($items);
 
         return $searchResults;
     }

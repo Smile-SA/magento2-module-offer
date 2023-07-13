@@ -79,7 +79,7 @@ class Collection extends AbstractCollection
      */
     public function addProductFilter(int $productId): self
     {
-        $this->addFieldToFilter(OfferInterface::PRODUCT_ID, $productId);
+        $this->addFieldToFilter(OfferInterface::PRODUCT_ID, (string) $productId);
 
         return $this;
     }
@@ -89,7 +89,7 @@ class Collection extends AbstractCollection
      */
     public function addSellerFilter(int $sellerId): self
     {
-        $this->addFieldToFilter(OfferInterface::SELLER_ID, $sellerId);
+        $this->addFieldToFilter(OfferInterface::SELLER_ID, (string) $sellerId);
 
         return $this;
     }

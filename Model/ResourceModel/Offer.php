@@ -45,7 +45,7 @@ class Offer extends AbstractDb
     {
         $offerId = $this->getOfferId($object, $value, $field);
         if ($offerId) {
-            $this->entityManager->load($object, $offerId);
+            $this->entityManager->load($object, (string) $offerId);
         }
 
         return $this;

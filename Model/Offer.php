@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Smile\Offer\Model;
 
-use Exception;
 use Magento\Catalog\Model\Product;
 use Magento\Framework\App\Area;
 use Magento\Framework\DataObject;
 use Magento\Framework\DataObject\IdentityInterface;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Model\AbstractExtensibleModel;
 use Smile\Offer\Api\Data\OfferExtensionInterface;
 use Smile\Offer\Api\Data\OfferInterface;
@@ -164,13 +164,13 @@ class Offer extends AbstractExtensibleModel implements OfferInterface, IdentityI
      *
      * Convert Date Fields to proper DateTime objects.
      *
-     * @throws Exception
+     * @throws LocalizedException
      */
     public function loadPost(array $data): self
     {
         $validationResults = $this->validateData(new DataObject($data));
         if ($validationResults !== true) {
-            throw new Exception(implode($validationResults));
+            throw new LocalizedException(__(implode($validationResults)));
         }
 
         foreach ($data as $key => $value) {
@@ -194,6 +194,7 @@ class Offer extends AbstractExtensibleModel implements OfferInterface, IdentityI
     public function getExtensionAttributes(): ?OfferExtensionInterface
     {
         $extensionAttributes = $this->_getExtensionAttributes();
+        // @phpstan-ignore-next-line - this if seems not necessary, TODO: test without it
         if (!$extensionAttributes) {
             $extensionAttributes = $this->extensionAttributesFactory->create(OfferInterface::class);
             $this->_setExtensionAttributes($extensionAttributes);

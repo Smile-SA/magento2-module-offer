@@ -1,0 +1,17 @@
+{
+    "smile_offer": {
+        "column": {
+            "offer_id": true,
+            "product_id": true,
+            "seller_id": true,
+            "is_available": true,
+            "price": true,
+            "special_price": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "SMILE_OFFER_PRODUCT_ID_CATALOG_PRODUCT_ENTITY_ENTITY_ID": true,
+            "SMILE_OFFER_SELLER_ID_SMILE_SELLER_ENTITY_ENTITY_ID": true
+        }
+    }
+}

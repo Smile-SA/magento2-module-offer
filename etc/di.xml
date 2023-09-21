@@ -1,30 +1,9 @@
 <?xml version="1.0"?>
-<!--
-/**
- * Smile_Offer dependency injection configuration.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade this module to newer
- * versions in the future.
- *
- * @category  Smile
- * @package   Smile\Offer
- * @author    Aurelien Foucret <aurelien.foucret@smile.fr>
- * @copyright 2016 Smile
- * @license   Open Software License ("OSL") v. 3.0
- */
- -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
-
-    <preference for="Smile\Offer\Api\Data\OfferInterface" type="Smile\Offer\Model\Offer" />
-
-    <preference for="Smile\Offer\Api\Data\OfferSearchResultsInterface" type="Magento\Framework\Api\SearchResults" />
-
-    <preference for="Smile\Offer\Api\OfferRepositoryInterface" type="Smile\Offer\Model\OfferRepository" />
-
-    <preference for="Smile\Offer\Api\OfferManagementInterface" type="Smile\Offer\Model\OfferManagement" />
-
+    <preference for="Smile\Offer\Api\Data\OfferInterface" type="Smile\Offer\Model\Offer"/>
+    <preference for="Smile\Offer\Api\Data\OfferSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
+    <preference for="Smile\Offer\Api\OfferRepositoryInterface" type="Smile\Offer\Model\OfferRepository"/>
+    <preference for="Smile\Offer\Api\OfferManagementInterface" type="Smile\Offer\Model\OfferManagement"/>
     <preference for="Smile\Offer\Model\Locator\LocatorInterface" type="Smile\Offer\Model\Locator\RegistryLocator"/>
 
     <type name="Magento\Framework\EntityManager\MetadataPool">
@@ -45,6 +24,7 @@
             </argument>
         </arguments>
     </type>
+
     <!-- Datasources resolver -->
     <type name="Smile\ElasticsuiteCore\Index\DataSourceResolver">
         <arguments>

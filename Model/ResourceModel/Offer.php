@@ -1,88 +1,60 @@
 <?php
-/**
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade this module to newer
- * versions in the future.
- *
- * @category  Smile
- * @package   Smile\Offer
- * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2016 Smile
- * @license   Open Software License ("OSL") v. 3.0
- */
+
+declare(strict_types=1);
 
 namespace Smile\Offer\Model\ResourceModel;
 
+use Exception;
+use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Select;
-use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Framework\EntityManager\EntityManager;
+use Magento\Framework\EntityManager\MetadataPool;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Model\AbstractModel;
 use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
 use Magento\Framework\Model\ResourceModel\Db\Context;
 use Smile\Offer\Api\Data\OfferInterface;
 
 /**
- * Offer Resource Model
- *
- * @category Smile
- * @package  Smile\Offer
- * @author   Aurelien Foucret <aurelien.foucret@smile.fr>
+ * Offer Resource Model.
  */
 class Offer extends AbstractDb
 {
-    /**
-     * @var EntityManager
-     */
-    protected $entityManager;
-
-    /**
-     * @var MetadataPool
-     */
-    protected $metadataPool;
-
-    /**
-     * Offer constructor.
-     *
-     * @param \Magento\Framework\Model\ResourceModel\Db\Context $context        Application Context
-     * @param \Magento\Framework\EntityManager\EntityManager    $entityManager  Entity Manager
-     * @param \Magento\Framework\EntityManager\MetadataPool     $metadataPool   Metadata Pool
-     * @param null                                              $connectionName Connection name
-     */
     public function __construct(
         Context $context,
-        EntityManager $entityManager,
-        MetadataPool $metadataPool,
-        $connectionName = null
+        protected EntityManager $entityManager,
+        protected MetadataPool $metadataPool,
+        ?string $connectionName = null
     ) {
-        $this->entityManager = $entityManager;
-        $this->metadataPool = $metadataPool;
         parent::__construct($context, $connectionName);
     }
 
     /**
-     * Load an Offer by a given field's value.
-     *
-     * @param \Magento\Framework\Model\AbstractModel $object The offer
-     * @param mixed                                  $value  The value
-     * @param null                                   $field  The field, if any
-     *
-     * @return $this
+     * @inheritdoc
      */
-    public function load(AbstractModel $object, $value, $field = null)
+    protected function _construct(): void
+    {
+        $metadata = $this->metadataPool->getMetadata(OfferInterface::class);
+        $this->_init($metadata->getEntityTable(), $metadata->getIdentifierField());
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function load(AbstractModel $object, $value, $field = null): mixed
     {
         $offerId = $this->getOfferId($object, $value, $field);
         if ($offerId) {
-            $this->entityManager->load($object, $offerId);
+            $this->entityManager->load($object, (string) $offerId);
         }
 
         return $this;
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
-    public function save(AbstractModel $object)
+    public function save(AbstractModel $object): object
     {
         $this->_beforeSave($object);
         $this->entityManager->save($object);
@@ -91,9 +63,9 @@ class Offer extends AbstractDb
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
-    public function delete(AbstractModel $object)
+    public function delete(AbstractModel $object): AbstractDb|Offer
     {
         $this->entityManager->delete($object);
 
@@ -101,36 +73,20 @@ class Offer extends AbstractDb
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
-    public function getConnection()
+    public function getConnection(): AdapterInterface
     {
         return $this->metadataPool->getMetadata(OfferInterface::class)->getEntityConnection();
     }
 
     /**
-     * {@inheritDoc}
+     * Retrieve Offer Id by field value.
      *
-     * @SuppressWarnings(PHPMD.CamelCaseMethodName) Method is inherited.
+     * @throws Exception
+     * @throws LocalizedException
      */
-    protected function _construct()
-    {
-        $metadata = $this->metadataPool->getMetadata(OfferInterface::class);
-        $this->_init($metadata->getEntityTable(), $metadata->getIdentifierField());
-    }
-
-    /**
-     * Retrieve Offer Id by field value
-     *
-     * @param \Magento\Framework\Model\AbstractModel $object The Offer
-     * @param mixed                                  $value  The value
-     * @param null                                   $field  The field
-     *
-     * @return int|false
-     * @throws \Exception
-     * @throws \Magento\Framework\Exception\LocalizedException
-     */
-    private function getOfferId(AbstractModel $object, $value, $field = null)
+    private function getOfferId(AbstractModel $object, mixed $value, ?string $field = null): int
     {
         $entityMetadata = $this->metadataPool->getMetadata(OfferInterface::class);
 
@@ -150,6 +106,6 @@ class Offer extends AbstractDb
             $entityId = count($result) ? $result[0] : false;
         }
 
-        return $entityId;
+        return (int) $entityId;
     }
 }

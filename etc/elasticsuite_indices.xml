@@ -1,21 +1,4 @@
 <?xml version="1.0"?>
-<!--
-/**
- * Smile_ElasticsuiteCatalog indices configuration.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
- * versions in the future.
- *
- *
- * @category  Smile
- * @package   Smile\ElasticsuiteCatalog
- * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2016 Smile
- * @license   Open Software License ("OSL") v. 3.0
- */
- -->
 <indices xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="urn:magento:module:Smile_ElasticsuiteCore:etc/elasticsuite_indices.xsd">
 
@@ -23,14 +6,14 @@
         <type name="product" idFieldName="entity_id">
             <mapping>
                 <!-- Static fields handled by the "offers" datasource -->
-                <field name="offer.offer_id" type="integer" nestedPath="offer" />
-                <field name="offer.seller_id" type="integer" nestedPath="offer" />
-                <field name="offer.is_available" type="boolean" nestedPath="offer" />
-                <field name="offer.price" type="double" nestedPath="offer" />
-                <field name="offer.original_price" type="double" nestedPath="offer" />
-                <field name="offer.is_discount" type="boolean" nestedPath="offer" />
-                <field name="offer.start_date" type="date" nestedPath="offer" />
-                <field name="offer.end_date" type="date" nestedPath="offer" />
+                <field name="offer.offer_id" type="integer" nestedPath="offer"/>
+                <field name="offer.seller_id" type="integer" nestedPath="offer"/>
+                <field name="offer.is_available" type="boolean" nestedPath="offer"/>
+                <field name="offer.price" type="double" nestedPath="offer"/>
+                <field name="offer.original_price" type="double" nestedPath="offer"/>
+                <field name="offer.is_discount" type="boolean" nestedPath="offer"/>
+                <field name="offer.start_date" type="date" nestedPath="offer"/>
+                <field name="offer.end_date" type="date" nestedPath="offer"/>
             </mapping>
         </type>
     </index>

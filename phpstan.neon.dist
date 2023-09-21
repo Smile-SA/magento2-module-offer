@@ -1,0 +1,13 @@
+parameters:
+    # Ignore inheritance issue : Parameter #1 $object of method Smile\Offer\Model\ResourceModel\Offer::save() expects Magento\Framework\Model\AbstractModel, Smile\Offer\Api\Data\OfferInterface given.
+    # see : https://github.com/phpstan/phpstan/discussions/5937
+    level: 6
+    phpVersion: 80100
+    checkMissingIterableValueType: false
+    paths:
+        - .
+    excludePaths:
+        - 'vendor/*'
+
+includes:
+    - %currentWorkingDirectory%/vendor/smile/magento2-smilelab-phpstan/extension.neon

@@ -1,26 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-/**
- * Smile_Offer Mview Configuration.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade this module to newer
- * versions in the future.
- *
- *
- * @category  Smile
- * @package   Smile\Offer
- * @author    Romain Ruaud <romain.ruaud@smile.fr>
- * @copyright 2016 Smile
- * @license   Open Software License ("OSL") v. 3.0
- */
- -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Mview/etc/mview.xsd">
     <view id="catalogsearch_fulltext" class="\Magento\CatalogSearch\Model\Indexer\Mview\Action" group="indexer">
         <subscriptions>
             <!-- This subscription aims to reindex products after an offer is modified -->
-            <table name="smile_offer" entity_column="product_id" />
+            <table name="smile_offer" entity_column="product_id"/>
         </subscriptions>
     </view>
 </config>

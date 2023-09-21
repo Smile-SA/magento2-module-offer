@@ -1,82 +1,47 @@
 <?php
-/**
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade this module to newer
- * versions in the future.
- *
- * @category  Smile
- * @package   Smile\Offer
- * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2016 Smile
- * @license   Open Software License ("OSL") v. 3.0
- */
+
+declare(strict_types=1);
 
 namespace Smile\Offer\Model;
 
+use Exception;
 use Magento\Framework\Api\SearchCriteriaInterface;
+use Magento\Framework\Api\SortOrder;
+use Magento\Framework\DataObject;
+use Magento\Framework\Exception\CouldNotDeleteException;
+use Magento\Framework\Exception\CouldNotSaveException;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Smile\Offer\Api\Data\OfferInterface;
+use Smile\Offer\Api\Data\OfferSearchResultsInterface;
+use Smile\Offer\Api\Data\OfferSearchResultsInterfaceFactory;
 use Smile\Offer\Api\OfferRepositoryInterface;
 use Smile\Offer\Model\ResourceModel\Offer as OfferResource;
-use Smile\Offer\Api\Data\OfferInterfaceFactory as OfferFactory;
 use Smile\Offer\Model\ResourceModel\Offer\Collection;
 use Smile\Offer\Model\ResourceModel\Offer\CollectionFactory as OfferCollectionFactory;
-use Smile\Offer\Api\Data\OfferSearchResultsInterfaceFactory;
-use Magento\Framework\Exception\CouldNotSaveException;
-use Magento\Framework\Exception\CouldNotDeleteException;
-use Magento\Framework\Exception\NoSuchEntityException;
-use Magento\Framework\Api\SortOrder;
 
 /**
- * Offer Repository
+ * Offer Repository implementation.
  *
- * @category Smile
- * @package  Smile\Offer
- * @author   Aurelien Foucret <aurelien.foucret@smile.fr>
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class OfferRepository implements OfferRepositoryInterface
 {
-    /**
-     * @var \Smile\Offer\Model\ResourceModel\Offer
-     */
-    private $resource;
-
-    /**
-     * @var \Smile\Offer\Model\ResourceModel\Offer\CollectionFactory
-     */
-    private $offerCollectionFactory;
-
-    /**
-     * @var \Smile\Offer\Api\Data\OfferSearchResultsInterface
-     */
-    private $searchResultsFactory;
-
-
-    /**
-     * OfferRepository constructor.
-     *
-     * @param \Smile\Offer\Model\ResourceModel\Offer                   $resource               Offer Resource Model
-     * @param \Smile\Offer\Model\ResourceModel\Offer\CollectionFactory $offerCollectionFactory Offer Collection Factory
-     * @param \Smile\Offer\Api\Data\OfferSearchResultsInterfaceFactory $searchResultsFactory   Search Results Factory
-     */
     public function __construct(
-        OfferResource $resource,
-        OfferCollectionFactory $offerCollectionFactory,
-        OfferSearchResultsInterfaceFactory $searchResultsFactory
+        private OfferResource $resource,
+        private OfferCollectionFactory $offerCollectionFactory,
+        private OfferSearchResultsInterfaceFactory $searchResultsFactory
     ) {
-        $this->resource               = $resource;
-        $this->offerCollectionFactory = $offerCollectionFactory;
-        $this->searchResultsFactory   = $searchResultsFactory;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function save(OfferInterface $offer)
+    public function save(OfferInterface $offer): OfferInterface
     {
         try {
+            /** @var Offer $offer */
             $this->resource->save($offer);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             throw new CouldNotSaveException(__($exception->getMessage()));
         }
 
@@ -84,14 +49,15 @@ class OfferRepository implements OfferRepositoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function getById($offerId)
+    public function getById(int $offerId): OfferInterface|DataObject
     {
+        /** @var Offer $offer */
         $offer = $this->offerCollectionFactory->create()->getNewEmptyItem();
 
         $this->resource->load($offer, $offerId);
-        if (!$offer->getId()) {
+        if (!$offer->getOfferId()) {
             throw new NoSuchEntityException(__('Offer with id "%1" does not exist.', $offerId));
         }
 
@@ -99,29 +65,30 @@ class OfferRepository implements OfferRepositoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function delete(OfferInterface $offer)
+    public function delete(OfferInterface $offer): void
     {
         try {
+            /** @var Offer $offer */
             $this->resource->delete($offer);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             throw new CouldNotDeleteException(__($exception->getMessage()));
         }
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function deleteById($offerId)
+    public function deleteById($offerId): void
     {
         $this->delete($this->getById($offerId));
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function getList(SearchCriteriaInterface $criteria)
+    public function getList(SearchCriteriaInterface $criteria): OfferSearchResultsInterface
     {
         $searchResults = $this->searchResultsFactory->create();
         $searchResults->setSearchCriteria($criteria);
@@ -129,19 +96,17 @@ class OfferRepository implements OfferRepositoryInterface
         $collection = $this->getOfferCollection($criteria);
 
         $searchResults->setTotalCount($collection->getSize());
-        $searchResults->setItems($collection->getItems());
+        /** @var OfferInterface[] $items */
+        $items = $collection->getItems();
+        $searchResults->setItems($items);
 
         return $searchResults;
     }
 
     /**
-     * Retrieve Offer Collection
-     *
-     * @param SearchCriteriaInterface $criteria The search criteria
-     *
-     * @return Collection
+     * Retrieve Offer Collection.
      */
-    private function getOfferCollection(SearchCriteriaInterface $criteria)
+    private function getOfferCollection(SearchCriteriaInterface $criteria): Collection
     {
         $collection = $this->offerCollectionFactory->create();
 
@@ -156,16 +121,9 @@ class OfferRepository implements OfferRepositoryInterface
 
     /**
      * Apply filters to offer collection.
-     *
-     * @param Collection              $collection The collection
-     * @param SearchCriteriaInterface $criteria   Search criteria to apply
-     *
-     * @return $this
      */
-    private function addFiltersToCollection(
-        Collection $collection,
-        SearchCriteriaInterface $criteria
-    ) {
+    private function addFiltersToCollection(Collection $collection, SearchCriteriaInterface $criteria): self
+    {
         foreach ($criteria->getFilterGroups() as $filterGroup) {
             foreach ($filterGroup->getFilters() as $filter) {
                 $condition = $filter->getConditionType() ?: 'eq';
@@ -178,16 +136,9 @@ class OfferRepository implements OfferRepositoryInterface
 
     /**
      * Apply sort order to offer collection.
-     *
-     * @param Collection              $collection The collection
-     * @param SearchCriteriaInterface $criteria   Search criteria to apply
-     *
-     * @return $this
      */
-    private function addSortOrdersToCollection(
-        Collection $collection,
-        SearchCriteriaInterface $criteria
-    ) {
+    private function addSortOrdersToCollection(Collection $collection, SearchCriteriaInterface $criteria): self
+    {
         $sortOrders = $criteria->getSortOrders();
 
         if ($sortOrders) {

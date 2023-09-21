@@ -1,30 +1,21 @@
 <?php
-/**
- * DISCLAIMER
- * Do not edit or add to this file if you wish to upgrade this module to newer
- * versions in the future.
- *
- * @category  Smile
- * @package   Smile\Offer
- * @author    Romain Ruaud <romain.ruaud@smile.fr>
- * @copyright 2016 Smile
- * @license   Open Software License ("OSL") v. 3.0
- */
+
+declare(strict_types=1);
+
 namespace Smile\Offer\Model\Locator;
 
+use Magento\Framework\Exception\NotFoundException;
 use Smile\Offer\Api\Data\OfferInterface;
 
 /**
- * Offer Locator Interface
- *
- * @category Smile
- * @package  Smile\Offer
- * @author   Romain Ruaud <romain.ruaud@smile.fr>
+ * Offer Locator Interface.
  */
 interface LocatorInterface
 {
     /**
-     * @return OfferInterface
+     * Get the offer.
+     *
+     * @throws NotFoundException
      */
-    public function getOffer();
+    public function getOffer(): OfferInterface;
 }

@@ -6,22 +6,23 @@ It allows to add offers on products by sellers.
 
 ### Requirements
 
-The module requires :
+The module requires:
 
-- [ElasticSuite](https://github.com/Smile-SA/elasticsuite) > 2.1.*
-- [Seller](https://github.com/Smile-SA/magento2-module-seller) > 1.2.*
+- PHP ^8.1
+- [ElasticSuite](https://github.com/Smile-SA/elasticsuite) > 2.11.*
+- [Seller](https://github.com/Smile-SA/magento2-module-seller) > 2.0.*
 
 ### How to use
 
-1. Install the module via Composer :
+1. Install the module via Composer:
 
 ``` composer require smile/module-offer ```
 
-2. Enable it
+2. Enable it:
 
 ``` bin/magento module:enable Smile_Offer ```
 
-3. Install the module and rebuild the DI cache
+3. Install the module and rebuild the DI cache:
 
 ``` bin/magento setup:upgrade ```
 

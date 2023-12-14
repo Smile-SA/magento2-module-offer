@@ -109,16 +109,16 @@ interface OfferInterface extends CustomAttributesDataInterface
     public function setSpecialPrice(?float $price): OfferInterface;
 
     /**
-     * Retrieve existing extension attributes object or create a new one. - need concrete type declaration to generate OfferExtensionInterface
+     * Retrieve existing extension attributes object or create a new one.
      *
-     * @return ?\Smile\Offer\Api\Data\OfferExtensionInterface
+     * @return \Smile\Offer\Api\Data\OfferExtensionInterface|null
      */
     public function getExtensionAttributes(): ?OfferExtensionInterface;
 
     /**
      * Set an extension attributes object.
      *
-     * @param \Smile\Offer\Api\Data\OfferExtensionInterface $extensionAttributes The additional attributes - need concrete type declaration
+     * @param \Smile\Offer\Api\Data\OfferExtensionInterface $extensionAttributes
      * @return $this
      */
     public function setExtensionAttributes(\Smile\Offer\Api\Data\OfferExtensionInterface $extensionAttributes): self;

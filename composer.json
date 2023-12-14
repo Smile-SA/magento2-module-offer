@@ -19,7 +19,7 @@
         "magento/framework": ">=103.0.4",
         "magento/module-catalog": ">=104.0.4",
         "smile/elasticsuite": "^2.11",
-        "smile/module-seller": "dev-2.0.x"
+        "smile/module-seller": "2.0.x-dev"
     },
     "require-dev": {
         "smile/magento2-smilelab-quality-suite": "^3.0"

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <preference for="Smile\Offer\Api\Data\OfferInterface" type="Smile\Offer\Model\Offer"/>
-    <preference for="Smile\Offer\Api\Data\OfferSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
+    <preference for="Smile\Offer\Api\Data\OfferSearchResultsInterface" type="Smile\Offer\Model\OfferSearchResults"/>
     <preference for="Smile\Offer\Api\OfferRepositoryInterface" type="Smile\Offer\Model\OfferRepository"/>
     <preference for="Smile\Offer\Api\OfferManagementInterface" type="Smile\Offer\Model\OfferManagement"/>
     <preference for="Smile\Offer\Model\Locator\LocatorInterface" type="Smile\Offer\Model\Locator\RegistryLocator"/>

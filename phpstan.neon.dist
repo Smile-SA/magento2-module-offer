@@ -3,7 +3,15 @@ parameters:
     # see : https://github.com/phpstan/phpstan/discussions/5937
     level: 6
     phpVersion: 80100
-    checkMissingIterableValueType: false
+    ignoreErrors:
+        -
+            # phpstan 2.3 no longer parses PHPMD suppressions such as @SuppressWarnings(PHPMD.Xxx)
+            message: '#PHPDoc tag @SuppressWarnings has invalid value#'
+            identifier: phpDoc.parseError
+            reportUnmatched: false
+        -
+            identifier: missingType.iterableValue
+            reportUnmatched: false
     paths:
         - .
     excludePaths:

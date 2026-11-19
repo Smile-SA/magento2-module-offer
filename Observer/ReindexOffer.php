@@ -10,6 +10,7 @@ use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Indexer\IndexerInterface;
 use Magento\Framework\Indexer\IndexerRegistry;
 use Smile\Offer\Model\Offer;
+use Smile\Offer\Model\ResourceModel\Offer as OfferResource;
 
 /**
  * Observer that process Offer Reindexing.
@@ -18,8 +19,10 @@ class ReindexOffer implements ObserverInterface
 {
     private IndexerInterface $indexer;
 
-    public function __construct(private IndexerRegistry $indexerRegistry)
-    {
+    public function __construct(
+        private IndexerRegistry $indexerRegistry,
+        private OfferResource $offerResource
+    ) {
         $this->indexer = $this->indexerRegistry->get(Fulltext::INDEXER_ID);
     }
 
@@ -32,7 +35,7 @@ class ReindexOffer implements ObserverInterface
         $offer = $observer->getEvent()->getEntity();
 
         if (!$this->indexer->isScheduled()) {
-            $offer->getResource()->addCommitCallback(function () use ($offer): void {
+            $this->offerResource->addCommitCallback(function () use ($offer): void {
                 $this->indexer->reindexRow($offer->getProductId());
             });
         }

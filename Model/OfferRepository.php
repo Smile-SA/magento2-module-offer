@@ -7,7 +7,6 @@ namespace Smile\Offer\Model;
 use Exception;
 use Magento\Framework\Api\SearchCriteriaInterface;
 use Magento\Framework\Api\SortOrder;
-use Magento\Framework\DataObject;
 use Magento\Framework\Exception\CouldNotDeleteException;
 use Magento\Framework\Exception\CouldNotSaveException;
 use Magento\Framework\Exception\NoSuchEntityException;
@@ -51,7 +50,7 @@ class OfferRepository implements OfferRepositoryInterface
     /**
      * @inheritdoc
      */
-    public function getById(int $offerId): OfferInterface|DataObject
+    public function getById(int $offerId)
     {
         /** @var Offer $offer */
         $offer = $this->offerCollectionFactory->create()->getNewEmptyItem();

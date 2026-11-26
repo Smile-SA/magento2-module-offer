@@ -28,7 +28,7 @@ interface OfferRepositoryInterface
      * @param int $offerId Offer id.
      * @return \Smile\Offer\Api\Data\OfferInterface|DataObject
      */
-    public function getById(int $offerId): Data\OfferInterface|DataObject;
+    public function getById(int $offerId);
 
     /**
      * Retrieve offers matching the specified criteria.

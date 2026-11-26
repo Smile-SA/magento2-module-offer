@@ -41,7 +41,7 @@ class Offer extends AbstractDb
     /**
      * @inheritdoc
      */
-    public function load(AbstractModel $object, $value, $field = null): mixed
+    public function load(AbstractModel $object, $value, $field = null)
     {
         $offerId = $this->getOfferId($object, $value, $field);
         if ($offerId) {
@@ -65,7 +65,7 @@ class Offer extends AbstractDb
     /**
      * @inheritdoc
      */
-    public function delete(AbstractModel $object): AbstractDb|Offer
+    public function delete(AbstractModel $object)
     {
         $this->entityManager->delete($object);
 
@@ -86,7 +86,7 @@ class Offer extends AbstractDb
      * @throws Exception
      * @throws LocalizedException
      */
-    private function getOfferId(AbstractModel $object, mixed $value, ?string $field = null): int
+    private function getOfferId(AbstractModel $object, $value, ?string $field = null): int
     {
         $entityMetadata = $this->metadataPool->getMetadata(OfferInterface::class);
 

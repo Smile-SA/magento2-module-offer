@@ -45,5 +45,5 @@ interface OfferManagementInterface
      * @param int $sellerId  The seller Id
      * @return OfferInterface|DataObject
      */
-    public function getOffer(int $productId, int $sellerId): OfferInterface|DataObject;
+    public function getOffer(int $productId, int $sellerId);
 }

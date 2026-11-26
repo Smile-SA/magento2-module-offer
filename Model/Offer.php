@@ -217,7 +217,7 @@ class Offer extends AbstractExtensibleModel implements OfferInterface, IdentityI
      *
      * @return bool|string[] - return true if validation passed successfully. Array with errors description otherwise
      */
-    private function validateData(DataObject $dataObject): bool|array
+    private function validateData(DataObject $dataObject)
     {
         $result = [];
 
